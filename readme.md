@@ -3,7 +3,7 @@
 # Teapot BWLR1E
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/docs/images/device.jpg" alt="drawing"  width="50%" height="50%"/></p>
  
-Teapot BWLR1E is a solar-powered wireless LoRa environmental sensor capable of sensing temperature, humidity, air pressure and air quality using the on-board BME680. 
+Teapot BWLR1E is a solar-powered wireless LoRa environmental sensor capable of sensing temperature, humidity, air pressure and air quality using the on-board BME688. 
 With STM32WLE MCU as it's core and AEM10941 for solar charging, the device is capable of multi-year operation with the possibility of indefinite battery-life by utilizing the solar charging capability
 
 Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teapotlaboratories). 
@@ -78,7 +78,7 @@ More measurement can be found [here](https://github.com/teapotlaboratories/bwlr1
 
 
 ### Bill Of Materials
-Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store.](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/bill_of_materials.csv)
+Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/bill_of_materials.csv)
 
 > :warning: **Be sure to buy the RAK3172 variant without IPEX to use the On-Board Antenna** 
 
@@ -146,6 +146,7 @@ There are some issue, notes, and behavior that was discovered at the time of tes
 - Soldering the solar cell is better to be done manually using a soldering iron. Without proper reflow oven, it may damage the solar cell and reduces it's efficiency
 - Using Arduino RUI3 framework may introduce some-instability after programming. It is observed that by randomly power-cycling the board in-short interval after flashing, causes the board to hang in Boot mode
 - PRIMIN ( or 3V3 in old revision ) is available to use as the input for AEM10941 Primary Battery input. See schematic for more detail
+- PA15 or ADC5 in Arduino RUI3 is currently not working. This causes the battery measurement to not work as well. An alternative is to use Mbed OS.
 
 ## Reference
 The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
