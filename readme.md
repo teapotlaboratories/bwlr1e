@@ -30,7 +30,13 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 ## Boards
  <p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_render.gif" alt="pcb_render"  width="50%" height="50%"/><br><b>PCB Render</b></p>
 
-Built using KiCAD v6, the board is design to be as small as possible with all components placed on the top side of the PCB
+Built using KiCAD v6, the board is design to be as small as possible with all components placed on the top side of the PCB.
+The following are the lists of revision of the board:
+- Revision 1: Original design
+- Revision 2: Updated with rounded trace and change solar cell wiring to parallel for all cell
+- Revision 3: Rename 3V3 to PRIMIN and breaks out PRIMIN
+
+The following design are based on the latest revision.
 | Top Board | Bottom Board |
 |--|--|
 | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_front.jpg" alt="assembled_front"  width="77%" height="77%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_back.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
@@ -51,18 +57,18 @@ The case is design to be as small as possible with an additional magnets in the 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/placement_showcase.gif" alt="placement_showcase"  width="50%" height="50%"/><br><b>Sensor Placement with Magnet</b></p>
 
 ### Measurement
-Power consumption and solar charging current are measured using [Nordic PPK2](https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2)  and [CurrentRanger](https://lowpowerlab.com/shop/product/152)
+Power consumption and solar charging current are measured using [Nordic PPK2](https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2)  and [CurrentRanger](https://lowpowerlab.com/shop/product/152).
 The following are the summary of the measurement:
 - Transmit 14dBm:  305ms @ 20mA
 - Deep-Sleep : 3.22 uA
-- Direct Sunlight Charge: 9mA
-- Indirect Sunlight: 300uA
+- Direct Sunlight Solar Charge: 9mA
+- Indirect Sunlight Solar Charge: 300uA
 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/deep_sleep.png" alt="deep_sleep"  width="90%" height="90%"/><br><b>Deep-Sleep</b></p>
 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/bme680_measure_and_lora_transmit.png" alt="bme688_measure_and_lora_transmit"  width="90%" height="90%"/><br><b>BME688 Measure and LoRa Transmit</b></p>
 
-| Solar Charge Direct Sunlight | Solar Charge Indirect Sunlight |
+| Solar Charge - Direct Sunlight | Solar Charge - Indirect Sunlight |
 |--|--|
 | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/charge_direct_sunlight.jpg" alt="assembled_front"  width="80%" height="80%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/charge_indirect_sunlight.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
 
@@ -134,6 +140,12 @@ Here are some good tutorial to convert a Nucleo to and external ST-Link v2:
 
  - https://www.radioshuttle.de/en/turtle-en/nucleo-st-link-interface-en/
  - https://jeelabs.org/book/1547a/index.html
+
+## Additional Notes
+There are some issue, notes, and behavior that was discovered at the time of testing and development. The following are those discovery:
+- Soldering the solar cell is better to be done manually using a soldering iron. Without proper reflow oven, it may damage the solar cell and reduces it's efficiency
+- Using Arduino RUI3 framework may introduce some-instability after programming. It is observed that by randomly power-cycling the board in-short interval after flashing, causes the board to hang in Boot mode
+- PRIMIN ( or 3V3 in old revision ) is available to use as the input for AEM10941 Primary Battery input. See schematic for more detail
 
 ## Reference
 The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
