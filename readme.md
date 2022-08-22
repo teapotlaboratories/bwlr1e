@@ -44,8 +44,33 @@ Built using KiCAD v6, the board is design to be as small as possible with all co
 Built using [TinkerCAD](https://www.tinkercad.com), the cases are available with 2 variant, with or without the programming port. The cases are 3D printable with any generic 3D printer with/without suppport (depends on the orientation). The STL files are available [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/hardware/case)
  <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/case_open.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Case Open</b></p>
 
+The case is design to be as small as possible with an additional magnets in the back to ease the placement of the sensor. The following are the list of material used at the time of testing:
+- 3.7v LiPo Battery, 400 mAh 50mm x 25mm x 35mm ( it is possible to use 2 of this in parallel )
+- 4 piece of 8mm x 2mm neodymium magnet
 
- 
+<p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/placement_showcase.gif" alt="placement_showcase"  width="50%" height="50%"/><br><b>Sensor Placement with Magnet</b></p>
+
+### Measurement
+Power consumption and solar charging current are measured using [Nordic PPK2](https://www.nordicsemi.com/Products/Development-hardware/Power-Profiler-Kit-2)  and [CurrentRanger](https://lowpowerlab.com/shop/product/152)
+The following are the summary of the measurement:
+- Transmit 14dBm:  305ms @ 20mA
+- Deep-Sleep : 3.22 uA
+- Direct Sunlight Charge: 9mA
+- Indirect Sunlight: 300uA
+
+<p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/deep_sleep.png" alt="deep_sleep"  width="90%" height="90%"/><br><b>Deep-Sleep</b></p>
+
+<p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/bme680_measure_and_lora_transmit.png" alt="bme688_measure_and_lora_transmit"  width="90%" height="90%"/><br><b>BME688 Measure and LoRa Transmit</b></p>
+
+| Solar Charge Direct Sunlight | Solar Charge Indirect Sunlight |
+|--|--|
+| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/charge_direct_sunlight.jpg" alt="assembled_front"  width="80%" height="80%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/charge_indirect_sunlight.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
+
+
+
+More measurement can be found [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/docs/measurement)
+
+
 ### Bill Of Materials
 Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store.](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/bill_of_materials.csv)
 
