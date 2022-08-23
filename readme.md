@@ -11,7 +11,7 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 ## Specification
 
 - [RAK3172](https://docs.rakwireless.com/Product-Categories/WisDuo/RAK3172-Module/Overview/): An STM32WLE5CC module
-- [AEM10941](https://e-peas.com/product/aem10941): Solar Energy Harvesting
+- [AEM10941](https://e-peas.com/product/aem10941): Solar energy harvesting
 - 3.3V only power/pin. 
 - 3uA Deep-Sleep
 - BME688 for Environmental Sensing
@@ -20,8 +20,8 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 - 1KM+ Range
 - UART2 breakout for **Arduino** progamming
 - SWD breakout for **Mbed OS/STM32Cube** programming
-- SMA antenna connector
-- LiPo 3.7 Volts
+- iPEX antenna connector 
+- 3.7 Volts LiPo Battery
 
 ## Schematics
 
@@ -30,10 +30,10 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 ## Boards
  <p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_render.gif" alt="pcb_render"  width="50%" height="50%"/><br><b>PCB Render</b></p>
 
-Built using KiCAD v6, the board is design to be as small as possible with all components placed on the top side of the PCB.
+Built using KiCAD, the board is design to be as small as possible with all components placed on the top side of the PCB.
 The following are the lists of revision of the board:
-- Revision 1: Original design
-- Revision 2: Updated with rounded trace and change solar cell wiring to parallel for all cell
+- Revision 1: Initial design
+- Revision 2: Better trace, use rounded trace and change solar cell wiring to parallel for all cell
 - Revision 3: Rename 3V3 to PRIMIN and breaks out PRIMIN
 
 The following design are based on the latest revision.
@@ -118,7 +118,7 @@ Most of the components are generic and can be bought from any electornics/semi-c
 
 > :warning: **Board can only be powered using the LiPo Battery** 
 
-Programming the device can be done over the **UART2** or **SWD**, available next to the SMA antenna port.
+Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board.
 Out of the factory, the RAK3172 chip ships with an **AT firmware** that can be tested by connecting a USB-to-UART bridge to the **UART2** port.
 
 The following are some very good tutorial to start developing with the device:
