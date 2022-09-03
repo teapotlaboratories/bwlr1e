@@ -158,5 +158,6 @@ The project won't be possible without the amazing work from people across the gl
 
 ## License
 The product is open-source! However, some part of library used under **src**, might have it's own license.
+Please reach out or create a ticket to report any license violation.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
