@@ -6,8 +6,8 @@
 
   (title_block
     (title "Teapot BWLR1E")
-    (date "2022-08-21")
-    (rev "3")
+    (date "2022-10-22")
+    (rev "4")
     (company "Teapot Laboratories")
   )
 
@@ -4712,10 +4712,10 @@
     (property "Reference" "BT1" (id 0) (at 36.195 68.4529 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "3.7v LiPo" (id 1) (at 36.195 70.9929 0)
+    (property "Value" "" (id 1) (at 36.195 70.9929 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal" (id 2) (at 32.385 70.231 90)
+    (property "Footprint" "" (id 2) (at 32.385 70.231 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 32.385 70.231 90)
@@ -5346,7 +5346,7 @@
       (reference "#PWR0135") (unit 1) (value "GND") (footprint "")
     )
     (path "/c9f4c90b-d12e-49a7-861d-d88f5120271b"
-      (reference "BT1") (unit 1) (value "3.7v LiPo") (footprint "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal")
+      (reference "BT1") (unit 1) (value "3.7v LiPo") (footprint "Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal")
     )
     (path "/0befad4f-2e6c-4a2e-8b15-04b1327638c6"
       (reference "C1") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
