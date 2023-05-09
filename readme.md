@@ -13,6 +13,9 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 - The 1KM range is based on [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/) design, but have not been tested on this device yet
 - The position of the BME680 sensor on the board might not be the most efficient
 
+## Future Works
+- Change `SW4` wiring from GND to 3V3, to allow booting to STM32WLE USART Bootloader. This enable the user to flash the RAK3172 module using STM32CubeProgrammer without ST-Link.
+
 ## Specification
 
 - [RAK3172](https://docs.rakwireless.com/Product-Categories/WisDuo/RAK3172-Module/Overview/): An STM32WLE5CC module
