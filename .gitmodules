@@ -1,3 +1,0 @@
-[submodule "hardware/kicad/library"]
-	path = hardware/kicad/library
-	url = https://github.com/teapotlaboratories/kicad-library.git
