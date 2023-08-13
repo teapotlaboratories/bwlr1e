@@ -1,29 +1,28 @@
-﻿Id,Designator,Package,Quantity,Designation
-1,BT1,JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal,1,3.7v LiPo
-2,"C17,C8,C14,C13",C_0603,4,10uF 10VDC 
-3,"C2,C4",CP_EIA-3528-15_AVX-H,2,330uF
-4,"C5,C12,C11,C1,C3",C_0603,5,100nF 10VDC
-5,C6,C_1210_3225Metric,1,150uF 10VDC 
-6,C7,C_0603,1,22uF 10VDC 
-7,D1,LED_0603_1608Metric,1,RED
-8,D2,LED_0603_1608Metric,1,GREEN
-9,E1,XDCR_ANT-915-USP410,1,ANT-915-USP410
-10,L2,IND_LPS4012-103MRB,1,10uH 0.55A
-11,L3,L_0603,1,10uH
-12,Q1,SOT-23,,PJA3407
-13,Q2,SOT-323_SC-70,1,DMG1012UW
-14,R1,R_0603,1,4.7M
-15,R11,R_0603,1,100K
-16,"R12,R5,R13",R_0603,3,1K
-17,R14,R_0603,1,400K
-18,R16,R_0603,2,0
-19,R4,R_0603,1,10M
-20,"R7,R2,R3,R6",R_0603,4,10K
-21,"R9,R8,R15,R10",R_0603,4,1M
-22,"SC4,SC1,SC3,SC2",KXOB25-05X3F,4,KXOB25-05X3F
-23,SW3,SW_SPST_TL3342,1,RESET
-24,SW4,SW_SPST_TL3342,1,BOOT
-25,U1,BME688,1,BME688
-26,U2,RAK3172,1,RAK3172
-27,U3,QFN-28-1EP_5x5mm_P0.5mm_EP3.35x3.35mm,1,AEM10941-QFN
-28,U4,SOT-23-5,1,XC6215
+id,Designator,Quantity,Manufacturer,Manufacturer Part Number,Value,Part Description,Footprint,Type,Distributor,Distributor Part Number,Distributor Link
+1,BT1,1,JST,S2B-PH-SM4-TB,3.7v LiPo,"Connector Header Right Angle 2 position 0.079"" (2.00mm)",JST_PH_S2B-PH-SM4-TB,SMD,LCSC,C295747,https://www.lcsc.com/product-detail/Wire-To-Board-Wire-To-Wire-Connector_JST-Sales-America-S2B-PH-SM4-TB-LF-SN_C295747.html
+2,"C1, C3, C5, C11, C12",5,YAGEO,CC0603KRX7R6BB104,100n,Ceramic Capacitor 100nF 10% 10V X7R,C_0603_1608Metric,SMD,LCSC,C519438,https://www.lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_YAGEO-CC0603KRX7R6BB104_C519438.html
+4,"C2, C4",2,KYOCERA AVX,TPSB476K010R0350,47u,Tantalum Capacitors 47µF 10% 10 V 250mOhm,EIA-3528-15,SMD,Digikey,478-9088-1-ND,https://www.digikey.com/en/products/detail/kyocera-avx/TPSB476K010R0350/1472821
+5,C6,1,Samsung Electro-Mechanics,CL32A157MQVNNNE,150u,Ceramic Capacitor 150uF 20% 6.3V X5R,C_1210_3225Metric,SMD,Mouser,187-CL32A157MQVNNNE,https://www.mouser.com/ProductDetail/187-CL32A157MQVNNNE
+6,C7,1,Murata Electronics,GRM188R61A226ME15D,22u,Ceramic Capacitor 22uF 20% 10V X5R,C_0603_1608Metric,SMD,LCSC,C84419,https://www.lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_Murata-Electronics-GRM188R61A226ME15D_C84419.html
+7,"C8, C13, C14, C17",4,Murata Electronics,GRT188R61A106KE13D,10u,Ceramic Capacitor 10uF 10% 10V X5R,C_0603_1608Metric,SMD,LCSC,C782172,https://www.lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_Murata-Electronics-GRT188R61A106KE13D_C782172.html
+8,D1,1,Lite-On,LTST-C191KRKT,RED,Red 2V 20mA,LED_0603_1608Metric,SMD,LCSC,C125099,https://www.lcsc.com/product-detail/Light-Emitting-Diodes-LED_Lite-On-LTST-C191KRKT_C125099.html
+9,D2,1,Lite-On,LTST-C190KGKT,GREEN,Green 2V 20mA,LED_0603_1608Metric,SMD,LCSC,C125094,https://www.lcsc.com/product-detail/Light-Emitting-Diodes-LED_Lite-On-LTST-C190KGKT_C125094.html
+10,E1,1,Linx Technologies Inc.,ANT-915-USP410,ANT-915-USP410,Chip RF Antenna 902MHz ~ 930MHz 0.9dBi Solder Surface Mount,ANT-915-USP410,SMD,Digikey,343-ANT-915-USP410CT-ND,https://www.digikey.com/en/products/detail/linx-technologies-inc/ANT-915-USP410/13165344
+11,J1,1,JST Sales America,SM04B-SRSS-TB,Qwiic,"Connector Header Right Angle 4 position 0.039"" (1.00mm)",JST_SH_SM04B-SRSS-TB,SMD,LCSC,C160404,https://www.lcsc.com/product-detail/Wire-To-Board-Wire-To-Wire-Connector_JST-Sales-America-SM04B-SRSS-TB-LF-SN_C160404.html
+12,L1,1,UNI-ROYAL(Uniroyal Elec),0603WAF0000T5E,0,Resistor 0 5% 100mW,L_0603_1608Metric,SMD,LCSC,C21189,https://www.lcsc.com/product-detail/Chip-Resistor-Surface-Mount_UNI-ROYAL-Uniroyal-Elec-0603WAF0000T5E_C21189.html
+13,L2,1,Coilcraft,LPS4012-103MRC,10u,Power Inductor 10uH 20% 1.1A,IND_LPS4012-103MRB,SMD,Mouser,994-LPS4012-103MRC,https://www.mouser.com/ProductDetail/994-LPS4012-103MRC
+14,L3,1,TDK,MLZ1608M100WT000,10u,Power Inductor 10uH 20% 90mA,L_0603_1608Metric,SMD,LCSC,C76798,https://www.lcsc.com/product-detail/Inductors-SMD_TDK-MLZ1608M100WT000_C76798.html
+15,Q1,1,Alpha & Omega Semicon,AO3407A,AO3407A,P-Channel Enhacnement Mode MOSFET 30V 4.3A 48mΩ@10V,SOT-23,SMD,LCSC,C15155,https://www.lcsc.com/product-detail/MOSFETs_Alpha-Omega-Semicon-AO3407A_C15155.html
+16,Q2,1,TECH PUBLIC,DMG1012UW,DMG1012UW,N-Channel Enhancement Mode MOSFET 20V 0.9A 300mΩ@2.5V,SOT-323_SC-70,SMD,LCSC,C2940609,https://www.lcsc.com/product-detail/MOSFETs_TECH-PUBLIC-DMG1012UW_C2940609.html
+17,R1,1,UNI-ROYAL(Uniroyal Elec),0603WAF4704T5E,4.7M,Resistor 4.7M 1% 100mW,R_0603_1608Metric,SMD,LCSC,C23163,https://www.lcsc.com/product-detail/Chip-span-style-background-color-ff0-Resistor-span-Surface-Mount_UNI-ROYAL-Uniroyal-Elec-0603WAF4704T5E_C23163.html
+18,"R2, R3, R6, R7",4,YAGEO,RC0603JR-0710KL,10K,Resistor 10K 5% 100mW,R_0603_1608Metric,SMD,LCSC,C99198,https://www.lcsc.com/product-detail/_YAGEO-_C99198.html
+19,R4,1,UNI-ROYAL(Uniroyal Elec),0603WAF1005T5E,10M,Resistor 10M 1% 100mW,R_0603_1608Metric,SMD,LCSC,C7250,https://www.lcsc.com/product-detail/Chip-span-style-background-color-ff0-Resistor-span-Surface-Mount_UNI-ROYAL-Uniroyal-Elec-0603WAF1005T5E_C7250.html
+20,"R5, R12, R13",3,FOJAN,FRC0603J102TS,1K,Resistor 1K 5% 100mW,R_0603_1608Metric,SMD,LCSC,C2907113,https://www.lcsc.com/product-detail/_FOJAN-_C2907113.html
+21,"R8, R9",2,UNI-ROYAL(Uniroyal Elec),0603WAJ0105T5E,1M,Resistor 1M 5% 100mW,R_0603_1608Metric,SMD,LCSC,C26098,https://www.lcsc.com/product-detail/Chip-span-style-background-color-ff0-Resistor-span-Surface-Mount_UNI-ROYAL-Uniroyal-Elec-0603WAJ0105T5E_C26098.html
+22,"SC1, SC2, SC3, SC4",4,ANYSOLAR Ltd,KXOB25-05X3F,KXOB25-05X3F,Monocrystalline Solar Cell 30.7 mW 2.07 V,KXOB25-05X3F,SMD,Digikey,KXOB25-05X3FCT-ND,https://www.digikey.com/en/products/detail/anysolar-ltd/KXOB25-05X3F-TR/9990478
+23,SW3,1,E-Switch,TL3342F160QG,RESET,SPST SMD Tactile Switches,SW_SPST_TL3342,SMD,LCSC,C2886898,https://www.lcsc.com/product-detail/Tactile-Switches_E-Switch-TL3342F160QG_C2886898.html
+24,SW4,1,E-Switch,TL3342F160QG,BOOT,SPST SMD Tactile Switches,SW_SPST_TL3342,SMD,LCSC,C2886898,https://www.lcsc.com/product-detail/Tactile-Switches_E-Switch-TL3342F160QG_C2886898.html
+25,U1,1,Bosch Sensortec,BME688,BME688,"Air Quality Sensors Combined gas, humidity, pressure and temperature sensor",BME688,SMD,Mouser,262-BME688,https://www.mouser.com/ProductDetail/Bosch-Sensortec/BME688?qs=IS%252B4QmGtzzqQoVDscqwx3A%3D%3D
+26,U2,1,RAKwireless,309054,RAK3172-T,"RAK3172-T Module with TCXO, without IPEX, Frequency 915MHz, Band AS923 ",RAK3172,SMD,RAKwireless,309054,https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759297222
+27,U3,1,e-peas,AEM10941-QFN,AEM10941,Photovoltaic Energy Harvesting Manager,QFN-28-1EP_5x5mm_P0.5mm_EP3.35x3.35mm,SMD,Mouser,120-AEM10941-QFN,https://www.mouser.com/ProductDetail/e-peas/AEM10941-QFN?qs=W%2FMpXkg%252BdQ7CeqB2lBPbRQ%3D%3D
+28,U4,1,Torex Semicon,XC6215B332MR-G,XC6215,Linear Voltage Regulators (LDO) 200mA Fixed +3.3V,SOT-23-5,SMD,LCSC,C98230,https://www.lcsc.com/product-detail/Linear-Voltage-Regulators-LDO_Torex-Semicon-XC6215B332MR-G_C98230.html
