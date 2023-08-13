@@ -4408,7 +4408,7 @@
     (at 137.725 84.9)
     (descr "RAK3172 LoRaWAN module from RAKwireless.")
     (property "Manufacturer" "RAKwireless")
-    (property "Part Description" "RAK3172-T Module with TCXO without IPEX 915MHz AS923 ")
+    (property "Part Description" "RAK3172-T Module with TCXO, without IPEX, Frequency 915MHz, Band AS923 ")
     (property "Part Number" "309054")
     (property "Sheetfile" "bwlr1e.kicad_sch")
     (property "Sheetname" "")
