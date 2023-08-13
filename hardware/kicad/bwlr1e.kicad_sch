@@ -3172,7 +3172,7 @@
     (property "Part Number" "309054" (at 92.71 138.43 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Part Description" "RAK3172-T Module with TCXO without IPEX 915MHz AS923 " (at 92.71 138.43 0)
+    (property "Part Description" "RAK3172-T Module with TCXO, without IPEX, Frequency 915MHz, Band AS923 " (at 92.71 138.43 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 9967b5a4-728b-4171-9fbd-1f5e7d7c0053))
