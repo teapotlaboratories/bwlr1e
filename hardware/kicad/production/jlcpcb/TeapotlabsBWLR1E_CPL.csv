@@ -1,5 +1,5 @@
 Designator,Mid X,Mid Y,Rotation,Layer
-BT1,158.4,-132.715,0,bottom
+BT1,158.4,-132.715,180,bottom
 C1,135.498,-108.4,0,top
 C11,140.2,-100,180,top
 C12,140.2,-97,0,top
