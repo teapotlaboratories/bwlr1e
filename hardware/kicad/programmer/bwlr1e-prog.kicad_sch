@@ -5,9 +5,9 @@
   (paper "A4")
 
   (title_block
-    (title "Teapotlabs BWLR1E")
-    (date "2023-08-12")
-    (rev "4")
+    (title "Teapotlabs BWLR1E Programmer")
+    (date "2023-09-06")
+    (rev "1")
     (company "Teapot Laboratories")
   )
 
