@@ -2722,7 +2722,7 @@
   (symbol (lib_id "power:GND") (at 191.135 55.245 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 0610bae4-2e3e-4edf-add7-b0bda1d7dfed)
-    (property "Reference" "#PWR061" (at 191.135 61.595 0)
+    (property "Reference" "#PWR027" (at 191.135 61.595 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 191.135 60.325 0)
@@ -2738,7 +2738,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR061") (unit 1)
+          (reference "#PWR027") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -2752,7 +2752,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 124.46 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 06a2324e-7bb0-474b-a280-a36ca8113126)
-    (property "Reference" "TP5" (at 247.015 124.46 90)
+    (property "Reference" "TP6" (at 247.015 124.46 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 124.46 90)
@@ -2774,7 +2774,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP5") (unit 1)
+          (reference "TP6") (unit 1)
         )
       )
     )
@@ -2783,7 +2783,7 @@
   (symbol (lib_id "Switch:SW_Push") (at 181.61 121.92 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 0b4a66c4-0d82-4962-8f01-4706ccd5cda8)
-    (property "Reference" "SW5" (at 181.61 127 0)
+    (property "Reference" "SW2" (at 181.61 127 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "TL3342F160QG" (at 181.61 117.475 0)
@@ -2806,7 +2806,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "SW5") (unit 1)
+          (reference "SW2") (unit 1)
         )
       )
     )
@@ -2815,7 +2815,7 @@
   (symbol (lib_id "power:GND") (at 172.72 125.73 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 0fc76344-7247-4d6d-9e62-d351fcadf2a8)
-    (property "Reference" "#PWR03" (at 172.72 132.08 0)
+    (property "Reference" "#PWR023" (at 172.72 132.08 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 172.72 130.81 0)
@@ -2831,7 +2831,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR03") (unit 1)
+          (reference "#PWR023") (unit 1)
         )
       )
     )
@@ -2878,7 +2878,7 @@
   (symbol (lib_id "power:GND") (at 71.755 38.1 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 19b30fd9-3b53-4bea-aa83-cc3d295e0c42)
-    (property "Reference" "#PWR031" (at 71.755 44.45 0)
+    (property "Reference" "#PWR07" (at 71.755 44.45 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 71.755 43.18 0)
@@ -2894,7 +2894,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR031") (unit 1)
+          (reference "#PWR07") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -2908,7 +2908,7 @@
   (symbol (lib_id "Mechanical:MountingHole") (at 256.54 159.385 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 1babe7cf-9c3e-4077-8dc3-b866c8fdabf3)
-    (property "Reference" "H3" (at 259.08 158.115 0)
+    (property "Reference" "H4" (at 259.08 158.115 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "MountingHole" (at 259.08 160.655 0)
@@ -2923,7 +2923,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "H3") (unit 1)
+          (reference "H4") (unit 1)
         )
       )
     )
@@ -2932,7 +2932,7 @@
   (symbol (lib_id "Device:R_Small") (at 37.465 116.205 270) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 241f96a4-ad55-4562-b116-480ce360fe0c)
-    (property "Reference" "R5" (at 33.655 113.665 90)
+    (property "Reference" "R1" (at 33.655 113.665 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10K" (at 38.1 113.665 90)
@@ -2952,7 +2952,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R5") (unit 1)
+          (reference "R1") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -2966,7 +2966,7 @@
   (symbol (lib_id "Device:R_Small") (at 57.785 36.83 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 265d271a-6115-4eae-bca3-15be7a6d47aa)
-    (property "Reference" "R15" (at 55.245 39.37 90)
+    (property "Reference" "R6" (at 55.245 39.37 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5.1K" (at 60.325 39.37 90)
@@ -2986,7 +2986,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R15") (unit 1)
+          (reference "R6") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3000,7 +3000,7 @@
   (symbol (lib_id "power:GND") (at 24.13 186.055 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 28d8588b-5975-4247-8adf-99a051ea562b)
-    (property "Reference" "#PWR013" (at 24.13 192.405 0)
+    (property "Reference" "#PWR01" (at 24.13 192.405 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 24.13 191.135 0)
@@ -3016,7 +3016,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR013") (unit 1)
+          (reference "#PWR01") (unit 1)
         )
       )
     )
@@ -3025,7 +3025,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 109.22 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 2a1338b5-8d40-458a-9d24-bac76b51b578)
-    (property "Reference" "TP1" (at 247.015 109.22 90)
+    (property "Reference" "TP2" (at 247.015 109.22 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 109.22 90)
@@ -3047,7 +3047,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP1") (unit 1)
+          (reference "TP2") (unit 1)
         )
       )
     )
@@ -3086,7 +3086,7 @@
   (symbol (lib_id "Battery_Management:MCP73831-2-OT") (at 86.36 117.475 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 2cf34eb2-a40a-49da-9cba-fede7376a302)
-    (property "Reference" "U7" (at 88.3794 106.68 0)
+    (property "Reference" "U1" (at 88.3794 106.68 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "MCP73831T-2ACI/OT" (at 88.9 125.095 0)
@@ -3112,7 +3112,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "U7") (unit 1)
+          (reference "U1") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3126,7 +3126,7 @@
   (symbol (lib_id "power:GND") (at 184.785 103.505 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 30ad7d5f-002d-4fe7-8eec-ca1a0a639a5f)
-    (property "Reference" "#PWR06" (at 184.785 109.855 0)
+    (property "Reference" "#PWR025" (at 184.785 109.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 184.785 108.585 0)
@@ -3142,7 +3142,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR06") (unit 1)
+          (reference "#PWR025") (unit 1)
         )
       )
     )
@@ -3211,7 +3211,7 @@
   (symbol (lib_id "Device:R_Small") (at 37.465 121.285 270) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 351badd5-1641-4bf6-b11c-1acd6be727e3)
-    (property "Reference" "R1" (at 33.655 118.745 90)
+    (property "Reference" "R2" (at 33.655 118.745 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "5.1K" (at 38.1 118.745 90)
@@ -3231,7 +3231,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R1") (unit 1)
+          (reference "R2") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3245,7 +3245,7 @@
   (symbol (lib_id "Device:LED") (at 110.49 113.03 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 38b81ce1-8a0a-4e11-aa45-185f58cdbe55)
-    (property "Reference" "D4" (at 107.95 110.49 90)
+    (property "Reference" "D1" (at 107.95 110.49 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "ORANGE" (at 114.3 113.665 0)
@@ -3265,7 +3265,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "D4") (unit 1)
+          (reference "D1") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3279,7 +3279,7 @@
   (symbol (lib_id "power:GND") (at 32.385 71.12 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 3bc18340-6b0c-43a2-b6ee-413b5adbd9f3)
-    (property "Reference" "#PWR018" (at 32.385 77.47 0)
+    (property "Reference" "#PWR03" (at 32.385 77.47 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 32.385 76.2 0)
@@ -3295,7 +3295,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR018") (unit 1)
+          (reference "#PWR03") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3309,7 +3309,7 @@
   (symbol (lib_id "power:+3V3") (at 191.135 38.735 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 42486472-a330-45c2-9fb7-ec85b96255d6)
-    (property "Reference" "#PWR05" (at 191.135 42.545 0)
+    (property "Reference" "#PWR026" (at 191.135 42.545 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 197.485 37.465 0)
@@ -3325,7 +3325,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR05") (unit 1)
+          (reference "#PWR026") (unit 1)
         )
       )
     )
@@ -3334,7 +3334,7 @@
   (symbol (lib_id "Regulator_Linear:AP2112K-3.3") (at 177.165 43.815 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 4eae817c-1838-43e0-82a0-11bec29c746f)
-    (property "Reference" "U8" (at 181.61 50.8 0)
+    (property "Reference" "U3" (at 181.61 50.8 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "XC6220B331MR-G" (at 177.165 37.465 0)
@@ -3360,7 +3360,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "U8") (unit 1)
+          (reference "U3") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3374,7 +3374,7 @@
   (symbol (lib_id "Device:R_Small") (at 57.785 34.29 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 512fdf58-16a5-4941-9ddc-12a3595bb6cf)
-    (property "Reference" "R14" (at 55.245 31.75 90)
+    (property "Reference" "R5" (at 55.245 31.75 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "5.1K" (at 60.325 31.75 90)
@@ -3394,7 +3394,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R14") (unit 1)
+          (reference "R5") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3445,7 +3445,7 @@
   (symbol (lib_id "Device:C_Small") (at 120.015 121.285 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 54c1241d-39f5-4316-ae1e-2e9c176afd41)
-    (property "Reference" "C23" (at 122.555 120.0085 0)
+    (property "Reference" "C6" (at 122.555 120.0085 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "10u" (at 122.555 122.5485 0)
@@ -3465,7 +3465,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C23") (unit 1)
+          (reference "C6") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3479,7 +3479,7 @@
   (symbol (lib_id "power:GND") (at 153.035 55.245 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 55cba07f-8a97-4ff6-90c7-c5f58dcaaaa3)
-    (property "Reference" "#PWR056" (at 153.035 61.595 0)
+    (property "Reference" "#PWR021" (at 153.035 61.595 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 153.035 60.325 0)
@@ -3495,7 +3495,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR056") (unit 1)
+          (reference "#PWR021") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3509,7 +3509,7 @@
   (symbol (lib_id "Device:R_Small") (at 102.235 120.015 90) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 579ab261-ce38-4faf-885b-603d85ffc1a2)
-    (property "Reference" "R17" (at 99.695 117.475 90)
+    (property "Reference" "R7" (at 99.695 117.475 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "1K" (at 103.505 117.475 90)
@@ -3529,7 +3529,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R17") (unit 1)
+          (reference "R7") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3577,7 +3577,7 @@
   (symbol (lib_id "power:GND") (at 120.015 128.905 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 5ebad164-213a-4522-9c83-9fdcbaf5b959)
-    (property "Reference" "#PWR050" (at 120.015 135.255 0)
+    (property "Reference" "#PWR019" (at 120.015 135.255 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 120.015 133.985 0)
@@ -3593,7 +3593,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR050") (unit 1)
+          (reference "#PWR019") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3607,7 +3607,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 97.79 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 62a3c276-e41c-4876-9549-ffac908613b5)
-    (property "Reference" "TP8" (at 247.015 97.79 90)
+    (property "Reference" "TP1" (at 247.015 97.79 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 97.79 90)
@@ -3629,7 +3629,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP8") (unit 1)
+          (reference "TP1") (unit 1)
         )
       )
     )
@@ -3638,7 +3638,7 @@
   (symbol (lib_id "Device:C_Small") (at 191.135 47.625 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 6eb16276-532a-4e8e-a4be-391ddfe18567)
-    (property "Reference" "C26" (at 193.675 46.3485 0)
+    (property "Reference" "C8" (at 193.675 46.3485 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "10u" (at 193.675 48.8885 0)
@@ -3658,7 +3658,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C26") (unit 1)
+          (reference "C8") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3672,7 +3672,7 @@
   (symbol (lib_id "power:GND") (at 62.865 106.045 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 7596f075-4c77-4a42-b70b-390c3b4e9596)
-    (property "Reference" "#PWR041" (at 62.865 112.395 0)
+    (property "Reference" "#PWR05" (at 62.865 112.395 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 62.865 111.125 0)
@@ -3688,7 +3688,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR041") (unit 1)
+          (reference "#PWR05") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3702,7 +3702,7 @@
   (symbol (lib_id "power:GND") (at 273.05 135.89 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 762fb009-06de-4852-a85d-0e55dc074542)
-    (property "Reference" "#PWR0104" (at 273.05 142.24 0)
+    (property "Reference" "#PWR032" (at 273.05 142.24 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 273.05 140.97 0)
@@ -3718,7 +3718,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR0104") (unit 1)
+          (reference "#PWR032") (unit 1)
         )
       )
     )
@@ -3727,7 +3727,7 @@
   (symbol (lib_id "power:+BATT") (at 273.05 106.045 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 77076d41-2bb1-417c-b0a0-c2a5a62cd842)
-    (property "Reference" "#PWR01" (at 273.05 109.855 0)
+    (property "Reference" "#PWR031" (at 273.05 109.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+BATT" (at 273.05 101.6 0)
@@ -3743,7 +3743,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR01") (unit 1)
+          (reference "#PWR031") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3757,7 +3757,7 @@
   (symbol (lib_id "Switch:SW_Push") (at 215.265 121.92 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 78d0ab02-a45f-4c56-83c8-5e2842727187)
-    (property "Reference" "SW4" (at 217.805 127.635 0)
+    (property "Reference" "SW3" (at 217.805 127.635 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Value" "TL3342F160QG" (at 222.25 117.475 0)
@@ -3780,7 +3780,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "SW4") (unit 1)
+          (reference "SW3") (unit 1)
         )
       )
     )
@@ -3789,7 +3789,7 @@
   (symbol (lib_id "power:+BATT") (at 82.55 163.195 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 7db88a7c-4800-4f9d-b1bc-22de03528c55)
-    (property "Reference" "#PWR02" (at 82.55 167.005 0)
+    (property "Reference" "#PWR09" (at 82.55 167.005 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+BATT" (at 82.55 158.75 0)
@@ -3805,7 +3805,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR02") (unit 1)
+          (reference "#PWR09") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3819,7 +3819,7 @@
   (symbol (lib_id "power:+BATT") (at 120.015 106.045 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 7fa9da4a-cc66-42f2-a5b5-019157878407)
-    (property "Reference" "#PWR049" (at 120.015 109.855 0)
+    (property "Reference" "#PWR018" (at 120.015 109.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+BATT" (at 120.015 101.6 0)
@@ -3835,7 +3835,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR049") (unit 1)
+          (reference "#PWR018") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3849,7 +3849,7 @@
   (symbol (lib_id "Device:C_Small") (at 62.865 100.965 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 803d555e-2ec7-4462-936f-b0aef81e2325)
-    (property "Reference" "C22" (at 65.405 99.7012 0)
+    (property "Reference" "C3" (at 65.405 99.7012 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10u" (at 65.405 102.2412 0)
@@ -3869,7 +3869,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C22") (unit 1)
+          (reference "C3") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -3883,7 +3883,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 135.89 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 8556b312-f9f7-43c2-8b0c-5ca7ebf7f05a)
-    (property "Reference" "TP7" (at 247.015 135.89 90)
+    (property "Reference" "TP9" (at 247.015 135.89 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 135.89 90)
@@ -3905,7 +3905,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP7") (unit 1)
+          (reference "TP9") (unit 1)
         )
       )
     )
@@ -3954,7 +3954,7 @@
   (symbol (lib_id "power:+3V3") (at 256.54 22.86 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 91a0e250-6950-4ddd-a6d4-2499a67c6a42)
-    (property "Reference" "#PWR08" (at 256.54 26.67 0)
+    (property "Reference" "#PWR029" (at 256.54 26.67 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3" (at 262.89 21.59 0)
@@ -3970,7 +3970,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR08") (unit 1)
+          (reference "#PWR029") (unit 1)
         )
       )
     )
@@ -3979,7 +3979,7 @@
   (symbol (lib_id "power:GND") (at 30.48 133.35 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 92941b20-2913-4f19-a7a1-6ba1968f4d5e)
-    (property "Reference" "#PWR09" (at 30.48 139.7 0)
+    (property "Reference" "#PWR02" (at 30.48 139.7 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 30.48 138.43 0)
@@ -3995,7 +3995,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR09") (unit 1)
+          (reference "#PWR02") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4049,7 +4049,7 @@
   (symbol (lib_id "power:GND") (at 66.675 38.1 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 94a5c010-430a-4576-9c05-d22c627eabcb)
-    (property "Reference" "#PWR029" (at 66.675 44.45 0)
+    (property "Reference" "#PWR06" (at 66.675 44.45 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 66.675 43.18 0)
@@ -4065,7 +4065,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR029") (unit 1)
+          (reference "#PWR06") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4079,7 +4079,7 @@
   (symbol (lib_id "Device:C_Small") (at 153.035 50.165 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid 96f999f8-b8d1-46da-a48a-f3903f828580)
-    (property "Reference" "C24" (at 148.59 48.895 0)
+    (property "Reference" "C7" (at 148.59 48.895 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "10u" (at 147.955 51.435 0)
@@ -4099,7 +4099,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C24") (unit 1)
+          (reference "C7") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4113,7 +4113,7 @@
   (symbol (lib_id "Mechanical:MountingHole") (at 237.49 159.385 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 981298cf-10e0-47f1-bce9-41ff2e90a0a9)
-    (property "Reference" "H2" (at 240.03 158.115 0)
+    (property "Reference" "H3" (at 240.03 158.115 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "MountingHole" (at 240.03 160.655 0)
@@ -4128,7 +4128,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "H2") (unit 1)
+          (reference "H3") (unit 1)
         )
       )
     )
@@ -4170,7 +4170,7 @@
   (symbol (lib_id "Interface_USB:CH340E") (at 241.3 44.45 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a0c1b3cc-586e-49a7-91f7-680241f9ab4f)
-    (property "Reference" "U6" (at 243.3194 59.69 0)
+    (property "Reference" "U4" (at 243.3194 59.69 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "CH340E" (at 243.3194 62.23 0)
@@ -4201,7 +4201,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "U6") (unit 1)
+          (reference "U4") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4215,7 +4215,7 @@
   (symbol (lib_id "Mechanical:MountingHole") (at 218.44 159.385 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a16fa0e7-f7d0-4e17-aecc-d3911017c452)
-    (property "Reference" "H1" (at 220.98 158.115 0)
+    (property "Reference" "H2" (at 220.98 158.115 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "MountingHole" (at 220.98 160.655 0)
@@ -4230,7 +4230,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "H1") (unit 1)
+          (reference "H2") (unit 1)
         )
       )
     )
@@ -4239,7 +4239,7 @@
   (symbol (lib_id "power:VBUS") (at 153.035 38.735 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid a565df82-6705-4819-9718-f8b1bb1db728)
-    (property "Reference" "#PWR051" (at 153.035 42.545 0)
+    (property "Reference" "#PWR020" (at 153.035 42.545 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VBUS" (at 153.035 34.29 0)
@@ -4255,7 +4255,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR051") (unit 1)
+          (reference "#PWR020") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4299,7 +4299,7 @@
   (symbol (lib_id "Connector:USB_C_Receptacle_USB2.0") (at 32.385 44.45 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a7524a02-5333-48d5-84aa-329655ce1bd8)
-    (property "Reference" "J2" (at 32.385 21.59 0)
+    (property "Reference" "J1" (at 32.385 21.59 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "U262-161N-4BVC11" (at 32.385 24.13 0)
@@ -4337,7 +4337,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "J2") (unit 1)
+          (reference "J1") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4351,7 +4351,7 @@
   (symbol (lib_id "power:GND") (at 241.3 63.5 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid a9f3d13c-04ad-4378-9153-77b16e90e9fb)
-    (property "Reference" "#PWR035" (at 241.3 69.85 0)
+    (property "Reference" "#PWR028" (at 241.3 69.85 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 241.3 68.58 0)
@@ -4367,7 +4367,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR035") (unit 1)
+          (reference "#PWR028") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4381,7 +4381,7 @@
   (symbol (lib_id "Mechanical:MountingHole") (at 199.39 159.385 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid afe776c4-1a23-483c-99a5-2751ebb3938a)
-    (property "Reference" "H4" (at 201.93 158.115 0)
+    (property "Reference" "H1" (at 201.93 158.115 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "MountingHole" (at 201.93 160.655 0)
@@ -4396,7 +4396,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "H4") (unit 1)
+          (reference "H1") (unit 1)
         )
       )
     )
@@ -4405,7 +4405,7 @@
   (symbol (lib_id "Device:C_Polarized_Small") (at 53.34 175.895 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b179ca55-ce5e-4547-bee1-589e37a8d18d)
-    (property "Reference" "C4" (at 56.515 174.0789 0)
+    (property "Reference" "C2" (at 56.515 174.0789 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "330u" (at 56.515 176.6189 0)
@@ -4428,7 +4428,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C4") (unit 1)
+          (reference "C2") (unit 1)
         )
       )
     )
@@ -4437,7 +4437,7 @@
   (symbol (lib_id "Device:R_Small") (at 37.465 126.365 270) (mirror x) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b1b8eefc-a046-4161-8686-9fb3ad66ede1)
-    (property "Reference" "R2" (at 33.655 123.825 90)
+    (property "Reference" "R3" (at 33.655 123.825 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "2K" (at 38.1 123.825 90)
@@ -4457,7 +4457,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R2") (unit 1)
+          (reference "R3") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4471,7 +4471,7 @@
   (symbol (lib_id "Device:C_Polarized_Small") (at 41.91 175.895 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid b4cc0edd-4442-4cbf-aae3-5f57cb26cbac)
-    (property "Reference" "C2" (at 45.085 174.0789 0)
+    (property "Reference" "C1" (at 45.085 174.0789 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "330u" (at 45.085 176.6189 0)
@@ -4494,7 +4494,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C2") (unit 1)
+          (reference "C1") (unit 1)
         )
       )
     )
@@ -4503,7 +4503,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 113.03 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b524f92a-354c-4e70-b2ab-52ea6b8a451a)
-    (property "Reference" "TP2" (at 247.015 113.03 90)
+    (property "Reference" "TP3" (at 247.015 113.03 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 113.03 90)
@@ -4525,7 +4525,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP2") (unit 1)
+          (reference "TP3") (unit 1)
         )
       )
     )
@@ -4534,7 +4534,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 132.08 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid b52d853e-4d76-476e-81a7-56179a5b8c7c)
-    (property "Reference" "TP3" (at 247.015 132.08 90)
+    (property "Reference" "TP8" (at 247.015 132.08 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 132.08 90)
@@ -4556,7 +4556,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP3") (unit 1)
+          (reference "TP8") (unit 1)
         )
       )
     )
@@ -4565,7 +4565,7 @@
   (symbol (lib_id "power:VBUS") (at 62.865 95.885 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid bca25f95-4b39-4ab0-ac96-b3d2910a033a)
-    (property "Reference" "#PWR040" (at 62.865 99.695 0)
+    (property "Reference" "#PWR04" (at 62.865 99.695 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VBUS" (at 62.865 90.805 0)
@@ -4581,7 +4581,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR040") (unit 1)
+          (reference "#PWR04") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4621,7 +4621,7 @@
   (symbol (lib_id "Device:C_Small") (at 259.08 58.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid c0e53ab7-baa8-4a60-a2dc-97b30ee131b8)
-    (property "Reference" "C21" (at 261.62 57.1562 0)
+    (property "Reference" "C9" (at 261.62 57.1562 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "100n" (at 261.62 59.6962 0)
@@ -4641,7 +4641,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C21") (unit 1)
+          (reference "C9") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4655,7 +4655,7 @@
   (symbol (lib_id "power:+BATT") (at 100.965 112.395 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c0e94b53-820e-4c51-a55d-3b50a46d710e)
-    (property "Reference" "#PWR047" (at 100.965 116.205 0)
+    (property "Reference" "#PWR013" (at 100.965 116.205 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+BATT" (at 100.965 107.95 0)
@@ -4671,7 +4671,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR047") (unit 1)
+          (reference "#PWR013") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4685,7 +4685,7 @@
   (symbol (lib_id "Device:C") (at 81.915 33.655 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c115e1c0-e984-4f0f-a2c1-5a50fa3ab145)
-    (property "Reference" "C3" (at 84.836 32.4866 0)
+    (property "Reference" "C4" (at 84.836 32.4866 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10n" (at 84.836 34.798 0)
@@ -4711,7 +4711,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "C3") (unit 1)
+          (reference "C4") (unit 1)
         )
       )
       (project "Penguino-STM32WL-LoRa-E5"
@@ -4725,7 +4725,7 @@
   (symbol (lib_id "power:VBUS") (at 86.36 106.045 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c57fc493-b3b2-4051-883d-5fd9747947fe)
-    (property "Reference" "#PWR043" (at 86.36 109.855 0)
+    (property "Reference" "#PWR010" (at 86.36 109.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VBUS" (at 86.36 101.6 0)
@@ -4741,7 +4741,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR043") (unit 1)
+          (reference "#PWR010") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4755,7 +4755,7 @@
   (symbol (lib_id "power:VBUS") (at 110.49 106.045 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid c884aabe-8ba0-4e41-8cfb-e991d24b81ea)
-    (property "Reference" "#PWR048" (at 110.49 109.855 0)
+    (property "Reference" "#PWR017" (at 110.49 109.855 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "VBUS" (at 110.49 101.6 0)
@@ -4771,7 +4771,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR048") (unit 1)
+          (reference "#PWR017") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4817,7 +4817,7 @@
   (symbol (lib_id "power:GND") (at 86.36 128.905 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid cdf7c292-b019-4f26-bab3-3154ca48c86e)
-    (property "Reference" "#PWR044" (at 86.36 135.255 0)
+    (property "Reference" "#PWR011" (at 86.36 135.255 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 86.36 133.985 0)
@@ -4833,7 +4833,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR044") (unit 1)
+          (reference "#PWR011") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4847,7 +4847,7 @@
   (symbol (lib_id "Device:R_Small") (at 160.655 43.815 270) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid daf5e2be-bffd-4c9e-b1be-2887942949bb)
-    (property "Reference" "R19" (at 156.21 46.355 90)
+    (property "Reference" "R8" (at 156.21 46.355 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "10K" (at 161.29 46.355 90)
@@ -4867,7 +4867,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "R19") (unit 1)
+          (reference "R8") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4881,7 +4881,7 @@
   (symbol (lib_id "power:GND") (at 259.08 63.5 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid daf62394-9749-4654-8e91-4cbb1732a818)
-    (property "Reference" "#PWR038" (at 259.08 69.85 0)
+    (property "Reference" "#PWR030" (at 259.08 69.85 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 259.08 68.58 0)
@@ -4897,7 +4897,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR038") (unit 1)
+          (reference "#PWR030") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4911,7 +4911,7 @@
   (symbol (lib_id "power:GND") (at 159.385 185.42 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid ec908a78-f551-467c-abd3-11e18d534ebc)
-    (property "Reference" "#PWR04" (at 159.385 191.77 0)
+    (property "Reference" "#PWR022" (at 159.385 191.77 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 159.385 190.5 0)
@@ -4927,7 +4927,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR04") (unit 1)
+          (reference "#PWR022") (unit 1)
         )
       )
     )
@@ -4936,7 +4936,7 @@
   (symbol (lib_id "power:GND") (at 177.165 55.245 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f03c58a1-f766-4bb3-8c91-d2e806fb2a7f)
-    (property "Reference" "#PWR059" (at 177.165 61.595 0)
+    (property "Reference" "#PWR024" (at 177.165 61.595 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 177.165 60.325 0)
@@ -4952,7 +4952,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR059") (unit 1)
+          (reference "#PWR024") (unit 1)
         )
       )
       (project "feather_rak3172"
@@ -4966,7 +4966,7 @@
   (symbol (lib_id "Connector_Generic:Conn_01x08") (at 146.685 177.8 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f18d43d9-fd0d-43d9-93f2-d26ee06ddb2e)
-    (property "Reference" "J1" (at 143.51 177.8 0)
+    (property "Reference" "J2" (at 143.51 177.8 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "PinHeader_1x08_P2.54mm_Horizontal" (at 164.465 162.56 0)
@@ -4989,7 +4989,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "J1") (unit 1)
+          (reference "J2") (unit 1)
         )
       )
     )
@@ -4998,7 +4998,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 128.27 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid f5103312-b7a5-4588-a7bd-af2d174afeb2)
-    (property "Reference" "TP6" (at 247.015 128.27 90)
+    (property "Reference" "TP7" (at 247.015 128.27 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 128.27 90)
@@ -5020,7 +5020,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP6") (unit 1)
+          (reference "TP7") (unit 1)
         )
       )
     )
@@ -5086,7 +5086,7 @@
   (symbol (lib_id "Power_Protection:USBLC6-2P6") (at 106.68 59.69 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid f9cacdc2-56e7-4a6d-91f8-b8119da48cd2)
-    (property "Reference" "U1" (at 108.3311 46.99 0)
+    (property "Reference" "U2" (at 108.3311 46.99 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Value" "USBLC6-2P6" (at 108.3311 49.53 0)
@@ -5113,7 +5113,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "U1") (unit 1)
+          (reference "U2") (unit 1)
         )
       )
     )
@@ -5122,7 +5122,7 @@
   (symbol (lib_id "Connector:TestPoint") (at 265.43 120.65 90) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid fd511db4-23b2-4566-9130-8b0f927b9ccf)
-    (property "Reference" "TP14" (at 247.015 120.65 90)
+    (property "Reference" "TP5" (at 247.015 120.65 90)
       (effects (font (size 1.27 1.27)))
     )
     (property "Value" "90055-AS" (at 255.27 120.65 90)
@@ -5144,7 +5144,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "TP14") (unit 1)
+          (reference "TP5") (unit 1)
         )
       )
     )
@@ -5153,7 +5153,7 @@
   (symbol (lib_id "power:GND") (at 81.915 38.1 0) (unit 1)
     (in_bom yes) (on_board yes) (dnp no)
     (uuid fe1a75c7-c985-4281-b434-1d53fad1d717)
-    (property "Reference" "#PWR011" (at 81.915 44.45 0)
+    (property "Reference" "#PWR08" (at 81.915 44.45 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (at 82.042 42.4942 0)
@@ -5169,7 +5169,7 @@
     (instances
       (project "bwlr1e-prog"
         (path "/630c8da6-5464-4eef-824d-89618087f4b4"
-          (reference "#PWR011") (unit 1)
+          (reference "#PWR08") (unit 1)
         )
       )
       (project "Penguino-STM32WL-LoRa-E5"
