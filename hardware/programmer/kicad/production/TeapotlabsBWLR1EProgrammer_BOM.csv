@@ -1,6 +1,6 @@
 Id,Designator,Quantity,Manufacturer,Manufacturer Part Number,Value,Description,Footprint,Type,Distributor,Distributor Part Number,Distributor Link
 1,BT1,1,JST,S2B-PH-SM4-TB(LF)(SN),S2B-PH-SM4-TB(LF)(SN),"Connector Header Right Angle 2 position 0.079"" (2.00mm)",JST_PH_S2B-PH-SM4-TB,SMD,LCSC,C295747,https://www.lcsc.com/product-detail/Wire-To-Board-Wire-To-Wire-Connector_JST-Sales-America-S2B-PH-SM4-TB-LF-SN_C295747.html
-2,"C1, C2",2,KYOCERA AVX,TPSB476K010R0350,330u,Tantalum Capacitors 330µF 10% 10 V 350mOhm,CP_EIA-3528-15_AVX-H,SMD,LCSC,C444792,https://www.lcsc.com/product-detail/Tantalum-Capacitors_Kyocera-AVX-TPSB476K010R0350_C444792.html
+2,"C1, C2",2,KEMET,T520B337M006ATE040,330u,Tantalum Capacitors 330µF 20% 6.3 V 40mOhm,CP_EIA-3528-15_AVX-H,SMD,LCSC,C696806,https://www.lcsc.com/product-detail/span-style-background-color-ff0-Tantalum-span-Capacitors_KEMET-T520B337M006ATE040_C696806.html
 3,C3,1,Samsung Electro-Mechanics,CL10A106KP8NNNC,10u,Ceramic Capacitor 10uF 10% 10V X5R,0603_1608Metric,SMD,LCSC,C19702,https://www.lcsc.com/product-detail/_Samsung-Electro-Mechanics-_C19702.html
 4,C4,1,YAGEO,CC0402KRX7R9BB103,10n,Ceramic Capacitor 10nF 10% 50V X7R,0402_1005Metric,SMD,LCSC,C60133,https://www.lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_YAGEO-CC0402KRX7R9BB103_C60133.html
 5,C5,1,YAGEO,CC0402KRX5R6BB104,100n,Ceramic Capacitor 100nF 10% 10V X5R,0402_1005Metric,SMD,LCSC,C129131,https://www.lcsc.com/product-detail/Multilayer-Ceramic-Capacitors-MLCC-SMD-SMT_YAGEO-CC0402KRX5R6BB104_C129131.html
