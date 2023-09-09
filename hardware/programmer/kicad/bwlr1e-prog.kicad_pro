@@ -463,7 +463,7 @@
       "idf": "../../../../../../../../bwlr1e.emn",
       "netlist": "../../../../../../../../../../../",
       "specctra_dsn": "",
-      "step": "../../../../../../../../bwlr1e.step",
+      "step": "../bwlr1e-prog.step",
       "vrml": "../../../../../../../../../product/bwlr1e/bwlr1e.wrl"
     },
     "page_layout_descr_file": ""
