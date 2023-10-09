@@ -2,7 +2,12 @@
 #include<CayenneLPP.h>
 #include "Zanshin_BME680.h"  // Include the BME680 Sensor library
 
-#define OTAA_DEVEUI   {0xac, 0x1f, 0x09, 0xff, 0xfe, 0x08, 0x33, 0x7f}
+#define LED0          PA15
+#define LED1          PA1
+#define BATT_MEASURE  PB3
+#define ADC_TO_BATTERY  0.00118042553
+
+#define OTAA_DEVEUI   {0xAC, 0x1F, 0x09, 0xFF, 0xFE, 0x0E, 0x3A, 0x30}
 #define OTAA_APPKEY   {0xb5, 0x12, 0xfb, 0x72, 0xfc, 0x87, 0x20, 0x2a, 0xb3, 0x90, 0xc1, 0xbe, 0x8e, 0x46, 0x99, 0xf6}
 #define OTAA_APPEUI   {0x0E, 0x0D, 0x0D, 0x01, 0x0E, 0x01, 0x02, 0x0E}
 #define OTAA_PERIOD   (600*1000) // 10 minute seconds
@@ -15,6 +20,16 @@ BME680_Class BME680;  ///< Create an instance of the BME680 class
 
 /** Packet buffer for sending */
 CayenneLPP payload(32);
+
+int ReadBatteryAdc()
+{
+  return analogRead( BATT_MEASURE );
+}
+
+float ReadBatteryVoltage()
+{
+  return ((float) ReadBatteryAdc()) * ADC_TO_BATTERY;
+}
 
 void recvCallback(SERVICE_LORA_RECEIVE_T * data)
 {
@@ -45,6 +60,10 @@ void sendCallback(int32_t status)
 void setup()
 {
   Serial.begin(115200, RAK_AT_MODE);
+
+  pinMode(LED0, INPUT);
+  pinMode(LED1, INPUT);
+  analogReadResolution(14);
 
   Serial.println("RAKwireless LoRaWan OTAA Example");
   Serial.println("------------------------------------------------------");
@@ -110,11 +129,6 @@ void setup()
     Serial.printf("LoRaWan OTAA - set confirm mode is incorrect! \r\n");
     return;
   }
-  
-  if (!api.lorawan.txp.set(TXP)) {
-    Serial.printf("LoRaWan TXP - set transmit power fail! \r\n");
-    return;
-  }
 //  
 //  if (!api.lorawan.pnm.set(false)) {
 //    Serial.printf("LoRaWan OTAA - set to private network fail! \r\n");
@@ -154,7 +168,7 @@ void uplink_routine()
 {
   static int32_t  temp, humidity, pressure, gas;  // BME readings
   BME680.getSensorData(temp, humidity, pressure, gas);  // Get readings
-  static float batt = api.system.bat.get(); // use api system for example, does not actually works!
+  static float batt = ReadBatteryVoltage();
 
   payload.reset();
   payload.addTemperature(1, ((float) temp) / 100);
@@ -184,10 +198,6 @@ void uplink_routine()
 
 void loop()
 {
-  if (!api.lorawan.txp.set(TXP)) {
-    Serial.printf("LoRaWan TXP - set transmit power fail! \r\n");
-    return;
-  }
   int retry = 3;
   /** Wait for Join success */
   while (api.lorawan.njs.get() == 0) {
@@ -207,3 +217,5 @@ void loop()
   Serial.println("Wakeup..");
   
 }
+
+
