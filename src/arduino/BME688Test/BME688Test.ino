@@ -66,6 +66,11 @@ Version | Date       | Developer  | Comments
 1.0.0b  | 2018-06-30 | SV-Zanshin |           Cloned from original BME280 program
 */
 #include "Zanshin_BME680.h"  // Include the BME680 Sensor library
+
+#define ADC_TO_BATTERY  0.00118042553
+#define BATT_MEASURE PB3
+#define LED0          PA15
+#define LED1          PA1
 /**************************************************************************************************
 ** Declare all program constants                                                                 **
 **************************************************************************************************/
@@ -119,6 +124,13 @@ void setup() {
   BME680.setIIRFilter(IIR4);  // Use enumerated type values
   Serial.print(F("- Setting gas measurement to 320\xC2\xB0\x43 for 150ms\n"));  // "�C" symbols
   BME680.setGas(320, 150);  // 320�c for 150 milliseconds
+  pinMode( BATT_MEASURE, INPUT );
+  analogReadResolution( 12 );
+
+  pinMode(LED0, OUTPUT);
+  digitalWrite(LED0, LOW);
+  pinMode(LED1, OUTPUT);
+  digitalWrite(LED1, LOW);
 }  // of method setup()
 void loop() {
   /*!
@@ -153,10 +165,12 @@ void loop() {
     Serial.print(buf);
     sprintf(buf, "%4d.%02d", (int16_t)(gas / 100), (uint8_t)(gas % 100));  // Resistance milliohms
     Serial.print(buf);
-    sprintf(buf, " %.3f\n", api.system.bat.get());  // For example only, does not work!
+    sprintf(buf, " %.3f\n", analogRead( BATT_MEASURE ) * ADC_TO_BATTERY );  // For example only, does not work!
     Serial.print(buf);
     
-    //api.system.sleep.all(10000);
     delay(1000);  // Wait 10s
+
+    // sleep mcu for power testing
+    // api.system.sleep.all(10000);
   }                // of ignore first reading
 }  // of method loop()

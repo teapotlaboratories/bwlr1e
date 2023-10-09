@@ -7,12 +7,12 @@
 
 void setup() {
   Serial.begin(115200);
-  api.system.restoreDefault();
   
-  pinMode(POWER_STATUS, INPUT);
-  pinMode(LED0, INPUT);
-  pinMode(LED1, INPUT);
-  analogReadResolution(14);
+  pinMode( BATT_MEASURE, INPUT );
+  pinMode( POWER_STATUS, INPUT );
+  pinMode( LED0, INPUT );
+  pinMode( LED1, INPUT );
+  analogReadResolution( 12 );
 }
 
 void loop() {
@@ -23,18 +23,8 @@ void loop() {
   digitalWrite(LED1, LOW);
   delay(500);
 
-  int   batt_measure_adc  = ReadBatteryAdc();
+  int   batt_measure_adc  = analogRead( BATT_MEASURE );
   float batt_measure_volt = batt_measure_adc * ADC_TO_BATTERY;
   Serial.printf("Battery Voltage ADC: %d, Battery Voltage: %f\n", batt_measure_adc, batt_measure_volt);
   delay(100);
-}
-
-int ReadBatteryAdc()
-{
-  return analogRead( BATT_MEASURE );
-}
-
-float ReadBatteryVoltage()
-{
-  return ((float) ReadBatteryAdc()) * ADC_TO_BATTERY;
 }

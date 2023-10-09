@@ -22,14 +22,15 @@
 //
 // This sketch tests the standard 7-bit addresses
 // Devices with higher bit address might not be seen properly.
+#include <Wire.h>
 
 void setup() {
   
+  Serial.begin( 115200 );
   Serial.println("I2C Scanner");
 
   Wire.begin();
   Wire.setClock(400000);
-  api.system.restoreDefault();
 }
 
 void loop()
