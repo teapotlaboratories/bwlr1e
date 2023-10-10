@@ -2,14 +2,71 @@
  *  This example shows powersave function.
 ***/
 
+// select which SDK to use:
+//   RUI3       - RAKWireless RUI3 SDK
+//   STM32DUINO - STM32duino SDK  
+
+#define RUI3
+// #define STM32DUINO
+
 #define LED0          PA15
 #define LED1          PA1
 #define I2C_SDA       PA11
 #define I2C_SCL       PA12
 
-#include "Zanshin_BME680.h"  // Include the BME680 Sensor library
+#ifdef STM32DUINO
+#include "STM32LowPower.h"
+#endif
+
+#ifdef RUI3
+#include "Zanshin_BME680.h"
+#endif
+
+void setup()
+{
+
+#ifdef STM32DUINO  
+    LowPower.begin();
+#endif 
+#ifdef RUI3
+    // NOTE: need to check. 
+    //       For some reason, RUI3 SDK need to disable bme688
+    DisableBME688();
+#endif
+
+    // disable LED
+    pinMode(LED0, OUTPUT);
+    pinMode(LED1, OUTPUT);
+    digitalWrite( LED0, LOW );
+    digitalWrite( LED1, LOW );
+
+    Serial.begin(115200);
+
+    delay(2000);
+}
+
+void loop()
+{
+    Serial.print("The timestamp before sleeping: ");
+    Serial.print(millis());
+    Serial.println(" ms");
+    Serial.println("(Wait 10 seconds or Press any key to wakeup)");
+
+#ifdef RUI3  
+    api.system.sleep.all(10000);
+#endif
+#ifdef STM32DUINO
+  LowPower.shutdown(10000);
+#endif
+
+    Serial.print("The timestamp after sleeping: ");
+    Serial.print(millis());
+    Serial.println(" ms");
+}
 
 void DisableBME688(){
+
+  Wire.begin();
   BME680_Class BME680;
 
   // Initialize BME688
@@ -27,40 +84,4 @@ void DisableBME688(){
   // disable I2C
   pinMode(I2C_SDA, INPUT);
   pinMode(I2C_SCL, INPUT);
-}
-
-void WakeupCallback()
-{
-    Serial.printf("This is Wakeup Callback\r\n");
-}
-
-void setup()
-{
-    DisableBME688();
- 
-    Serial.begin(115200);
-    // disable LED
-    pinMode(LED0, OUTPUT);
-    pinMode(LED1, OUTPUT);
-
-    delay(2000);
-  
-    Serial.println("RAKwireless System Powersave Example");
-    Serial.println("------------------------------------------------------");
-    if ( api.system.sleep.registerWakeupCallback(WakeupCallback) == false )
-    {
-        Serial.println("Create Wakeup Callback failed.");
-    }
-}
-
-void loop()
-{
-    Serial.print("The timestamp before sleeping: ");
-    Serial.print(millis());
-    Serial.println(" ms");
-    Serial.println("(Wait 10 seconds or Press any key to wakeup)");
-    api.system.sleep.all(10000);
-    Serial.print("The timestamp after sleeping: ");
-    Serial.print(millis());
-    Serial.println(" ms");
 }
