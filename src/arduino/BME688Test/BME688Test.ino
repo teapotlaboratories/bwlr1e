@@ -68,7 +68,7 @@ Version | Date       | Developer  | Comments
 #include "Zanshin_BME680.h"  // Include the BME680 Sensor library
 
 #define ADC_TO_BATTERY  0.00118042553
-#define BATT_MEASURE PB3
+#define BATT_MEASURE  PB3
 #define LED0          PA15
 #define LED1          PA1
 /**************************************************************************************************
