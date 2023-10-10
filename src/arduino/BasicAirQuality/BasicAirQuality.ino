@@ -3,7 +3,7 @@
 #undef LED_BUILTIN
 #define LED0          PA15
 #define LED1          PA1
-#define LED_BUILTIN LED0
+#define LED_BUILTIN   LED0
 
 // Helper functions declarations
 void checkIaqSensorStatus(void);
@@ -21,6 +21,7 @@ void setup(void)
   Serial.begin(115200);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
   iaqSensor.begin(BME68X_I2C_ADDR_HIGH, Wire);
   output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
   Serial.println(output);
