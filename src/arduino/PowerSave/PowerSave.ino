@@ -56,7 +56,7 @@ void loop()
     api.system.sleep.all(10000);
 #endif
 #ifdef STM32DUINO
-  LowPower.shutdown(10000);
+  LowPower.deepSleep(10000);
 #endif
 
     Serial.print("The timestamp after sleeping: ");
