@@ -1,0 +1,7 @@
+#ifndef TEAPOT_BWLR1E_CONFIG_H
+#define TEAPOT_BWLR1E_CONFIG_H
+
+/* board revision */
+#define ADC_TO_BATTERY  0.00118042553
+
+#endif // TEAPOT_BWLR1E_CONFIG_H
