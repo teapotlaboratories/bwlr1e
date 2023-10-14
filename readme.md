@@ -1,6 +1,7 @@
 
   
   
+  
 # Teapot BWLR1E
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/docs/images/device.jpg" alt="drawing"  width="50%" height="50%"/></p>
  
@@ -13,9 +14,6 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 - The 1KM range is based on [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/) design, but have not been tested on this device yet
 - The position of the BME680 sensor on the board might not be the most efficient
 
-## Future Works
-- Change `SW4` wiring from GND to 3V3, to allow booting to STM32WLE USART Bootloader. This enable the user to flash the RAK3172 module using STM32CubeProgrammer without ST-Link.
-
 ## Specification
 
 - [RAK3172](https://docs.rakwireless.com/Product-Categories/WisDuo/RAK3172-Module/Overview/): An STM32WLE5CC module
@@ -26,14 +24,14 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 - Switchable TX Power. 14 dBm(50mA) or 22 dBm(140mA) ( on 915MHz frequency )
 - Supports LoRaWAN 1.0.3
 - 1KM+ Range
-- UART2 breakout for **Arduino** progamming
-- SWD breakout for **Mbed OS/STM32Cube** programming
+- UART2 breakout for **Arduino/Mbed OS/STM32Cube** programming 
+- SWD breakout for debugging and programming
 - iPEX antenna connector 
 - 3.7 Volts LiPo Battery
 
 ## Schematics
 
-<p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/hardware/schematic.png" alt="schematic"/></p>
+<p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/hardware/main/schematic.png" alt="schematic"/></p>
 
 ## Boards
  <p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_render.gif" alt="pcb_render"  width="50%" height="50%"/><br><b>PCB Render</b></p>
@@ -48,9 +46,9 @@ The following design are based on the latest revision.
 | Top Board | Bottom Board |
 |--|--|
 | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_front.jpg" alt="assembled_front"  width="77%" height="77%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_back.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
-| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_front.png" alt="pcb_front"  width="77%" height="77%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_back.png" alt="pcb_bottom"  width="77%" height="77%"/></p> |
+| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_top_kicad.png" alt="pcb_front"  width="77%" height="77%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_bottom_kicad.png" alt="pcb_bottom"  width="77%" height="77%"/></p> |
 
- <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/pcb.png" alt="pcb"  width="50%" height="50%"/><br><b>PCB Top and Bottom Layout</b></p> 
+ <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/main/pcb.svg" alt="pcb"  width="50%" height="50%"/><br><b>PCB Top and Bottom Layout</b></p> 
   
 ### Case
 <p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/case_render.gif" alt="case_render"  width="50%" height="50%"/></p>
@@ -141,20 +139,10 @@ For connecting to the **UART2** port, use any USB-to-UART bridge module. In test
 
 > :warning: **Be sure to only use 3.3V module. Do not 5V module** 
 
-For connecting to the **SWD** port, use ST-Link v2  in-circuit debugger and programmer from STM. In testing, ST-Link v2 clone will not work. The ST-Link v2 should atleast be reconizeable by the [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).
-A cheap and alternative way to get an authorized ST-Link is to buy a Nucleo board, cut the top part which contain the ST-Link and use it as an external programmer.
- <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/nucleo_st-linkv2.jpeg" width="70%" height="70%"><br>ST-Link v2 from a Nucleo Development Board</p>
-Here are some good tutorial to convert a Nucleo to and external ST-Link v2:
-
- - https://www.radioshuttle.de/en/turtle-en/nucleo-st-link-interface-en/
- - https://jeelabs.org/book/1547a/index.html
-
 ## Notes
 There are some issue, notes, and behavior that was discovered at the time of testing and development. The following are those discovery:
 - Soldering the solar cell is better to be done manually using a soldering iron. Without proper reflow oven, it may damage the solar cell and reduces it's efficiency
 - Using Arduino RUI3 framework may introduce some-instability after programming. It is observed that by randomly power-cycling the board in-short interval after flashing, causes the board to hang in Boot mode
-- PRIMIN ( or 3V3 in old revision ) is available to use as the input for AEM10941 Primary Battery input. See schematic for more detail
-- PA15 or ADC5 in Arduino RUI3 is currently not working. This causes the battery measurement to not work as well. An alternative is to use Mbed OS.
 
 ## Reference
 The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
