@@ -67,7 +67,7 @@ The following are the summary of the measurement:
 - Direct Sunlight Solar Charge: 9mA
 - Indirect Sunlight Solar Charge: 300uA
 
-> :warning: **Tested on Revision 1, but should be similar to Revision 5** 
+> :warning: **Tested on Revision 3, but should be similar to Revision 5** 
 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/deep_sleep.png" alt="deep_sleep"  width="90%" height="90%"/><br><b>Deep-Sleep</b></p>
 
