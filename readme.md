@@ -77,25 +77,18 @@ The following are the summary of the measurement:
 |--|--|
 | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/charge_direct_sunlight.jpg" alt="assembled_front"  width="80%" height="80%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/charge_indirect_sunlight.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
 
-
-
 More measurement can be found [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/docs/measurement)
-
-
 
 ### Bill Of Materials
 Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/main/bill_of_materials.csv)
 
 > :warning: **Be sure to buy the RAK3172 variant without IPEX to use the On-Board Antenna** 
 
-
-
-
 ## Programming
 
 > :warning: **Board can only be powered when LiPo battery is connected** 
 
-Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the BWLR1E Programmer
+Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the BWLR1E Programmer.
 Out of the factory, the RAK3172 chip ships with an **AT firmware** that can be tested by connecting a USB-to-UART bridge to the **UART2** port.
 
 The following are some very good tutorial to start developing with the device:
