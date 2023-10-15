@@ -83,7 +83,7 @@ The following are the summary of the measurement:
 More measurement can be found [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/docs/measurement)
 
 ### Bill Of Materials
-Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/main/bill_of_materials.csv)
+Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/blob/main/hardware/main/bill_of_materials.csv)
 
 > :warning: **Be sure to buy the RAK3172 variant without IPEX to use the On-Board Antenna** 
 
