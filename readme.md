@@ -53,6 +53,9 @@ The following design are based on the latest revision.
 Built using [TinkerCAD](https://www.tinkercad.com). The case are 3D printable with any generic 3D printer with/without support. The STL files are available [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/hardware/main/case)
  <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/case_open.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Case Open</b></p>
 
+For adding additional sensors, Qwiic connector is also available on the left side of the board.
+ <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/using_qwiic.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Connecting Adafruit BME688</b></p>
+
 The case is design to be as small as possible with an additional magnets in the back to ease the placement of the sensor. The following are the list of material used at the time of testing:
 - 3.7v LiPo Battery, 400 mAh 6mm x 30mm x 48mm
 - 4 piece of 8mm x 2mm neodymium magnet
@@ -88,7 +91,7 @@ Most of the components are generic and can be bought from any electornics/semi-c
 
 > :warning: **Board can only be powered when LiPo battery is connected** 
 
-Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the BWLR1E Programmer.
+Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the [BWLR1E Programmer](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
 Out of the factory, the RAK3172 chip ships with an **AT firmware** that can be tested by connecting a USB-to-UART bridge to the **UART2** port.
 
 The following are some very good tutorial to start developing with the device:
