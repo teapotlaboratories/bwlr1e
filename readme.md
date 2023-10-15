@@ -1,7 +1,3 @@
-
-  
-  
-  
 # Teapot BWLR1E
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/docs/images/device.jpg" alt="drawing"  width="50%" height="50%"/></p>
  
@@ -12,7 +8,6 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
   
 ## Disclaimer
 - The 1KM range is based on [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/) design, but have not been tested on this device yet
-- The position of the BME680 sensor on the board might not be the most efficient
 
 ## Specification
 
@@ -41,23 +36,25 @@ The following are the lists of revision of the board:
 - Revision 1: Initial design
 - Revision 2: Better trace, use rounded trace and change solar cell wiring to parallel for all cell
 - Revision 3: Rename 3V3 to PRIMIN and breaks out PRIMIN
+- Revision 4: Improve layout and wiring, and add Qwiic connector
+- Revision 5: Change C6 to 22uF
 
 The following design are based on the latest revision.
 | Top Board | Bottom Board |
 |--|--|
-| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_front.jpg" alt="assembled_front"  width="77%" height="77%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_back.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
-| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_top_kicad.png" alt="pcb_front"  width="77%" height="77%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_bottom_kicad.png" alt="pcb_bottom"  width="77%" height="77%"/></p> |
+| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_front.jpg" alt="assembled_front"  width="67%" height="67%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/assembled_back.jpg" alt="assembled_back"  width="70%" height="70%"/></p> |
+| <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_top_kicad.png" alt="pcb_front"  width="73%" height="73%"/></p> | <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/pcb_bottom_kicad.png" alt="pcb_bottom"  width="77%" height="77%"/></p> |
 
  <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/main/pcb.svg" alt="pcb"  width="50%" height="50%"/><br><b>PCB Top and Bottom Layout</b></p> 
   
 ### Case
 <p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/case_render.gif" alt="case_render"  width="50%" height="50%"/></p>
 
-Built using [TinkerCAD](https://www.tinkercad.com), the cases are available with 2 variant, with or without the programming port. The cases are 3D printable with any generic 3D printer with/without suppport (depends on the orientation). The STL files are available [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/hardware/case)
+Built using [TinkerCAD](https://www.tinkercad.com). The case are 3D printable with any generic 3D printer with/without support. The STL files are available [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/hardware/main/case)
  <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/case_open.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Case Open</b></p>
 
 The case is design to be as small as possible with an additional magnets in the back to ease the placement of the sensor. The following are the list of material used at the time of testing:
-- 3.7v LiPo Battery, 400 mAh 50mm x 25mm x 35mm ( it is possible to use 2 of this in parallel )
+- 3.7v LiPo Battery, 400 mAh 6mm x 30mm x 48mm
 - 4 piece of 8mm x 2mm neodymium magnet
 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/placement_showcase.gif" alt="placement_showcase"  width="50%" height="50%"/><br><b>Sensor Placement with Magnet</b></p>
@@ -69,6 +66,8 @@ The following are the summary of the measurement:
 - Deep-Sleep : 3.22 uA
 - Direct Sunlight Solar Charge: 9mA
 - Indirect Sunlight Solar Charge: 300uA
+
+> :warning: **Tested on Revision 1, but should be similar to Revision 5** 
 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/measurement/deep_sleep.png" alt="deep_sleep"  width="90%" height="90%"/><br><b>Deep-Sleep</b></p>
 
@@ -83,48 +82,20 @@ The following are the summary of the measurement:
 More measurement can be found [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/docs/measurement)
 
 
+
 ### Bill Of Materials
-Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/bill_of_materials.csv)
+Most of the components are generic and can be bought from any electornics/semi-conductor distributor. RAK3172 is the only component available in [RAKwireless store](https://store.rakwireless.com/products/wisduo-lpwan-module-rak3172?variant=40014759493830). The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/main/bill_of_materials.csv)
 
 > :warning: **Be sure to buy the RAK3172 variant without IPEX to use the On-Board Antenna** 
 
-|Id |Designator      |Package                                |Quantity|Designation   |
-|---|----------------|---------------------------------------|--------|--------------|
-|1  |BT1             |JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal|1       |3.7v LiPo     |
-|2  |C17,C8,C14,C13  |C_0603                                 |4       |10uF 10VDC    |
-|3  |C2,C4           |CP_EIA-3528-15_AVX-H                   |2       |330uF         |
-|4  |C5,C12,C11,C1,C3|C_0603                                 |5       |100nF 10VDC   |
-|5  |C6              |C_1210_3225Metric                      |1       |150uF 10VDC   |
-|6  |C7              |C_0603                                 |1       |22uF 10VDC    |
-|7  |D1              |LED_0603_1608Metric                    |1       |RED           |
-|8  |D2              |LED_0603_1608Metric                    |1       |GREEN         |
-|9  |E1              |XDCR_ANT-915-USP410                    |1       |ANT-915-USP410|
-|10 |L2              |IND_LPS4012-103MRB                     |1       |10uH 0.55A    |
-|11 |L3              |L_0603                                 |1       |10uH          |
-|12 |Q1              |SOT-23                                 |        |PJA3407       |
-|13 |Q2              |SOT-323_SC-70                          |1       |DMG1012UW     |
-|14 |R1              |R_0603                                 |1       |4.7M          |
-|15 |R11             |R_0603                                 |1       |100K          |
-|16 |R12,R5,R13      |R_0603                                 |3       |1K            |
-|17 |R14             |R_0603                                 |1       |400K          |
-|18 |R16             |R_0603                                 |2       |0             |
-|19 |R4              |R_0603                                 |1       |10M           |
-|20 |R7,R2,R3,R6     |R_0603                                 |4       |10K           |
-|21 |R9,R8,R15,R10   |R_0603                                 |4       |1M            |
-|22 |SC4,SC1,SC3,SC2 |KXOB25-05X3F                           |4       |KXOB25-05X3F  |
-|23 |SW3             |SW_SPST_TL3342                         |1       |RESET         |
-|24 |SW4             |SW_SPST_TL3342                         |1       |BOOT          |
-|25 |U1              |BME688                                 |1       |BME688        |
-|26 |U2              |RAK3172                                |1       |RAK3172       |
-|27 |U3              |QFN-28-1EP_5x5mm_P0.5mm_EP3.35x3.35mm  |1       |AEM10941-QFN  |
-|28 |U4              |SOT-23-5                               |1       |XC6215        |
+
 
 
 ## Programming
 
-> :warning: **Board can only be powered using the LiPo Battery** 
+> :warning: **Board can only be powered when LiPo battery is connected** 
 
-Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board.
+Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the BWLR1E Programmer
 Out of the factory, the RAK3172 chip ships with an **AT firmware** that can be tested by connecting a USB-to-UART bridge to the **UART2** port.
 
 The following are some very good tutorial to start developing with the device:
@@ -139,16 +110,12 @@ For connecting to the **UART2** port, use any USB-to-UART bridge module. In test
 
 > :warning: **Be sure to only use 3.3V module. Do not 5V module** 
 
-## Notes
-There are some issue, notes, and behavior that was discovered at the time of testing and development. The following are those discovery:
-- Soldering the solar cell is better to be done manually using a soldering iron. Without proper reflow oven, it may damage the solar cell and reduces it's efficiency
-- Using Arduino RUI3 framework may introduce some-instability after programming. It is observed that by randomly power-cycling the board in-short interval after flashing, causes the board to hang in Boot mode
-
 ## Reference
 The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
 
  - [LoRa e5 Tiny](https://github.com/hallard/LoRa-E5-Tiny)
  - [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/)
+	 - [Github](https://github.com/Mircerson/AERQ) 
  - [TSEM](https://hackaday.io/project/159139-tiny-solar-energy-module-tsem)
 
 
