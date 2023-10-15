@@ -57,7 +57,7 @@ For adding additional sensors, Qwiic connector is also available on the left sid
  <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/using_qwiic.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Connecting Adafruit BME688</b></p>
 
 The case is design to be as small as possible with an additional magnets in the back to ease the placement of the sensor. The following are the list of material used at the time of testing:
-- 3.7v LiPo Battery, 400 mAh 6mm x 30mm x 48mm
+- 3.7v LiPo Battery, 850mAh 6mm x 30mm x 48mm
 - 4 piece of 8mm x 2mm neodymium magnet
 
 <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/placement_showcase.gif" alt="placement_showcase"  width="50%" height="50%"/><br><b>Sensor Placement with Magnet</b></p>
