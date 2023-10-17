@@ -64,6 +64,7 @@ void loop()
     Serial.println(" ms");
 }
 
+#ifdef RUI3
 void DisableBME688(){
 
   Wire.begin();
@@ -85,3 +86,4 @@ void DisableBME688(){
   pinMode(I2C_SDA, INPUT);
   pinMode(I2C_SCL, INPUT);
 }
+#endif
