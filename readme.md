@@ -54,7 +54,7 @@ Built using [TinkerCAD](https://www.tinkercad.com). The case are 3D printable wi
  <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/case_open.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Case Open</b></p>
 
 For adding additional sensors, Qwiic connector is also available on the left side of the board.
- <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/using_qwiic.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Connecting Adafruit BME688</b></p>
+ <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/using_qwiic.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Connecting to Adafruit BME688</b></p>
 
 The case is design to be as small as possible with an additional magnets in the back to ease the placement of the sensor. The following are the list of material used at the time of testing:
 - 3.7v LiPo Battery, 850mAh 6mm x 30mm x 48mm
@@ -105,6 +105,11 @@ For connecting to the **UART2** port, use any USB-to-UART bridge module. In test
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/sparkfun_ftdi.jpeg" width="30%" height="30%"><br>Sparkfun USB-to-UART Bridge</p>
 
 > :warning: **Be sure to only use 3.3V module. Do not 5V module** 
+
+### Programming with Teapotlabs BWLR1E Programmer
+ <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/programming_bwlr1e.gif" width="30%" height="30%"><br>Teapotlabs BWLR1E Programmer</p>
+
+An alternatiev to solder-free programming is to use the Teapotlabs BWLR1E Programmer. A full detail of the device can be found [here](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
 
 ## Reference
 The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
