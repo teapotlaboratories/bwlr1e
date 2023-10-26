@@ -4,7 +4,7 @@
 Teapotlabs BWLR1E is a solar-powered wireless LoRa environmental sensor capable of sensing temperature, humidity, air pressure and air quality using the on-board BME688. 
 With STM32WLE MCU as it's core and AEM10941 for solar charging, the device is capable of multi-year operation with the possibility of indefinite battery-life by utilizing the solar charging capability
 
-Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teapotlaboratories). 
+Teapotlabs BWLR1E is part of  [Teapot open-hardware project](https://github.com/teapotlaboratories). 
   
 ## Disclaimer
 - The 1KM range is based on [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/) design, but have not been tested on this device yet
