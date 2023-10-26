@@ -1,13 +1,21 @@
 # Teapotlabs BWLR1E
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/docs/images/device.jpg" alt="drawing"  width="50%" height="50%"/></p>
  
-Teapot BWLR1E is a solar-powered wireless LoRa environmental sensor capable of sensing temperature, humidity, air pressure and air quality using the on-board BME688. 
+Teapotlabs BWLR1E is a solar-powered wireless LoRa environmental sensor capable of sensing temperature, humidity, air pressure and air quality using the on-board BME688. 
 With STM32WLE MCU as it's core and AEM10941 for solar charging, the device is capable of multi-year operation with the possibility of indefinite battery-life by utilizing the solar charging capability
 
 Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teapotlaboratories). 
   
 ## Disclaimer
 - The 1KM range is based on [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/) design, but have not been tested on this device yet
+
+## Acknowledgement
+The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
+
+ - [LoRa e5 Tiny](https://github.com/hallard/LoRa-E5-Tiny)
+ - [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/)
+	 - [Github](https://github.com/Mircerson/AERQ) 
+ - [TSEM](https://hackaday.io/project/159139-tiny-solar-energy-module-tsem)
 
 ## Specification
 
@@ -106,19 +114,27 @@ For connecting to the **UART2** port, use any USB-to-UART bridge module. In test
 
 > :warning: **Be sure to only use 3.3V module. Do not 5V module** 
 
+### Available SDK
+Through **UART2**, user can program the device using the following SDK:
+- [Arduino RUI3 SDK](https://github.com/RAKWireless/RAKwireless-Arduino-BSP-Index)
+- [Arduino STM32duino SDK](https://github.com/stm32duino/Arduino_Core_STM32)
+- [MbedOS](https://github.com/hallard/LoRa-E5-Tiny/blob/main/README.md#compile-and-flash-firmware)
+- [STM32Cube](https://docs.rakwireless.com/Product-Categories/WisDuo/RAK3172-Module/Low-Level-Development/#installation-of-stm32cube-ide)
+
+Other than [Arduino RUI3 SDK](https://github.com/RAKWireless/RAKwireless-Arduino-BSP-Index), to program the device, user need to put the device in Serial Bootloader mode by,
+1. Press and Hold `BOOT` and `RESET` button
+2. Release `RESET` button 
+3. Wait few seconds ( try 2 seconds )
+4. Release `BOOT` button
+5. Device should be in Serial Bootloader mode.
+
+You can also use [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) , instead of the SDK  to upload a firmware
+  
 ### Programming with Teapotlabs BWLR1E Programmer
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/programming_bwlr1e.gif" width="30%" height="30%"><br>Teapotlabs BWLR1E Programmer</p>
 
-An alternatiev to solder-free programming is to use the Teapotlabs BWLR1E Programmer. A full detail of the device can be found [here](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
-
-## Reference
-The project won't be possible without the amazing work from people across the globe. The following are the reference to those awesome projects:
-
- - [LoRa e5 Tiny](https://github.com/hallard/LoRa-E5-Tiny)
- - [AERQ - Air Quality Monitoring](https://www.seeedstudio.com/blog/2022/04/27/monitoring-indoor-air-pollutants-the-silent-issue-for-smart-city-iot-using-seeed-lora-e5-and-fusion-pcba/)
-	 - [Github](https://github.com/Mircerson/AERQ) 
- - [TSEM](https://hackaday.io/project/159139-tiny-solar-energy-module-tsem)
-
+An alternative to solder-free programming is to use the Teapotlabs BWLR1E Programmer. A full detail of the device can be found [here](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
+The programmer connects to UART2 of the device. 
 
 ## License
 The product is open-source! However, some part of library used under **src**, might have it's own license.
