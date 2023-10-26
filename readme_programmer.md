@@ -1,10 +1,8 @@
 # Teapotlabs BWLR1E Programmer	
- <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/main/docs/images/programmer/device.jpg" alt="drawing"  width="50%" height="50%"/></p>
- 
-Teapot BWLR1E is a solar-powered wireless LoRa environmental sensor capable of sensing temperature, humidity, air pressure and air quality using the on-board BME688. 
-With STM32WLE MCU as it's core and AEM10941 for solar charging, the device is capable of multi-year operation with the possibility of indefinite battery-life by utilizing the solar charging capability
 
-Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teapotlaboratories). 
+<p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/programmer/showcase_render.gif" alt="case_render"  width="50%" height="50%"/></p>
+ 
+Teapotlabs BWLR1E Programmer is a device to support programming Teapotlabs BWLR1E without soldering to the device. The programmer interface to the device program pad via pogo-pins.
  
 ## Specification
 
@@ -19,7 +17,7 @@ Teapot BWLR1E is part of  [Teapot open-hardware project](https://github.com/teap
 	- BOOT
 	- LIPO+
 - On-board `boot` and `reset` button
-- Pinout for external button
+- Pin header for external button
 
 ## Schematics
 
@@ -39,22 +37,25 @@ The following design are based on the latest revision.
  <p align="center"> <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/hardware/programmer/pcb.svg" alt="pcb"  width="50%" height="50%"/><br><b>PCB Top and Bottom Layout</b></p> 
   
 ### Case
-<p align="center">  <img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/programmer/showcase_render.gif" alt="case_render"  width="50%" height="50%"/></p>
+ <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/showcase_render_exploded_view.png" width="30%" height="30%"><br>Teapotlabs BWLR1E Programmer Exploded View</p>
 
 Built using [TinkerCAD](https://www.tinkercad.com). The case are 3D printable with any generic 3D printer with/without support. The STL files are available [here](https://github.com/teapotlaboratories/bwlr1e/tree/main/hardware/programmer/case)
+The case is made of 3 parts:
+- Main case: holds the Programmer.
+- Separator: separate the programmer and Teapotlabs BWLR1E.
+- Locks: locks Teapotlabs BWLR1E in place for charging the device.
  <p align="center"><img src="https://github.com/teapotlaboratories/bwlr1e/raw/main/docs/images/programmer/case_open.jpg" alt="drawing"  width="50%" height="50%"/><br><b>Case Open</b></p>
 
 ### Bill Of Materials
 Most of the components are generic and can be bought from any electornics/semi-conductor distributor. The bill of materials can be downloaded [here](https://github.com/teapotlaboratories/bwlr1e/blob/main/hardware/programmer/bill_of_materials.csv)
 
-## Programming
+## Programming Teapotlabs BWLR1E
 
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/programming_bwlr1e.gif" width="30%" height="30%"><br>Setting-up Teapotlabs BWLR1E Programmer</p>
  
-Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the [BWLR1E Programmer](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
-Out of the factory, the RAK3172 chip ships with an **AT firmware** that can be tested by connecting a USB-to-UART bridge to the **UART2** port.
+Using the programmer, Teapotlabs BWLR1E can be programmed via the USB-C available in the programmer.Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the [BWLR1E Programmer](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
 
- <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/showcase_render_exploded_view.png" width="30%" height="30%"><br>Teapotlabs BWLR1E Programmer Exploded View</p>
+Out of the factory, the Teapotlabs BWLR1E chip ships with an **AT firmware** that can be tested by sending AT commands using the programmer USB-C.
 
 The following are some very good tutorial to start developing with the device:
 
@@ -63,15 +64,23 @@ The following are some very good tutorial to start developing with the device:
  - [Programming with STM32Cube](https://docs.rakwireless.com/Product-Categories/WisDuo/RAK3172-Module/Low-Level-Development/#rak3172-on-stm32cubeide-with-stm32wl-sdk-v1-0-0)
  - [Programming with MbedOS](https://github.com/hallard/LoRa-E5-Tiny/blob/main/README.md#compile-and-flash-firmware)
 
-For connecting to the **UART2** port, use any USB-to-UART bridge module. In testing, the [Sparkfun](https://www.sparkfun.com/products/14050) board is used for communication with AT firmware and programming over **Arduino**.
- <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/sparkfun_ftdi.jpeg" width="30%" height="30%"><br>Sparkfun USB-to-UART Bridge</p>
+### Available SDK
+Through the USB-C, user can program Teapotlabs BWLR1E using the following SDK:
 
-> :warning: **Be sure to only use 3.3V module. Do not 5V module** 
+-   [Arduino RUI3 SDK](https://github.com/RAKWireless/RAKwireless-Arduino-BSP-Index)
+-   [Arduino STM32duino SDK](https://github.com/stm32duino/Arduino_Core_STM32)
+-   [MbedOS](https://github.com/hallard/LoRa-E5-Tiny/blob/main/README.md#compile-and-flash-firmware)
+-   [STM32Cube](https://docs.rakwireless.com/Product-Categories/WisDuo/RAK3172-Module/Low-Level-Development/#installation-of-stm32cube-ide)
 
-### Programming with Teapotlabs BWLR1E Programmer
- <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/programming_bwlr1e.gif" width="30%" height="30%"><br>Teapotlabs BWLR1E Programmer</p>
+Other than  [Arduino RUI3 SDK](https://github.com/RAKWireless/RAKwireless-Arduino-BSP-Index), to program the device, user need to put the device in Serial Bootloader mode by,
 
-An alternative to solder-free programming is to use the Teapotlabs BWLR1E Programmer. A full detail of the device can be found [here](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
+1.  Press and Hold  `BOOT`  and  `RESET`  button
+2.  Release  `RESET`  button
+3.  Wait few seconds ( try 2 seconds )
+4.  Release  `BOOT`  button
+5.  Device should be in Serial Bootloader mode.
+
+You can also use  [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html)  , instead of the SDK to upload a firmware
 
 ## License
 The product is open-source! However, some part of library used under **src**, might have it's own license.
