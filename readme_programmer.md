@@ -53,8 +53,7 @@ Most of the components are generic and can be bought from any electornics/semi-c
 
  <p align="center"> <img src="https://raw.githubusercontent.com/teapotlaboratories/bwlr1e/master/docs/images/programmer/programming_bwlr1e.gif" width="30%" height="30%"><br>Setting-up Teapotlabs BWLR1E Programmer</p>
  
-Using the programmer, Teapotlabs BWLR1E can be programmed via the USB-C available in the programmer.Programming the device can be done over the **UART2** or **SWD**, available on the right side of the board or uses the [BWLR1E Programmer](https://github.com/teapotlaboratories/bwlr1e/blob/main/readme_programmer.md).
-
+Using the programmer, Teapotlabs BWLR1E can be programmed via the USB-C available in the programmer.
 Out of the factory, the Teapotlabs BWLR1E chip ships with an **AT firmware** that can be tested by sending AT commands using the programmer USB-C.
 
 The following are some very good tutorial to start developing with the device:
@@ -87,3 +86,4 @@ The product is open-source! However, some part of library used under **src**, mi
 Please reach out or create a ticket to report any license violation.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
