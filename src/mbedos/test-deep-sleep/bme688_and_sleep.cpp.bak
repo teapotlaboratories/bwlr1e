@@ -1,0 +1,150 @@
+/* i2c-scanner-rhombio-l476dmw1k
+ * 
+ * Copyright (c) 2019 rhomb.io
+ * 
+ * MIT License
+ * 
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+#include "mbed.h"
+#include "bme680.h"
+#include <mbed.h>
+#include "events/EventQueue.h"
+#include <stdio.h>
+
+
+#include "stm32wlxx_hal_pwr_ex.h"
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+
+BME680 bme688( I2C_SDA, I2C_SCL, 1);
+mbed::DigitalOut led0(PA_15);
+mbed::DigitalOut led1(PA_1);
+
+// mbed::DigitalOut scl(I2C_SCL);
+// mbed::DigitalOut sda(I2C_SDA);
+
+int main()
+{
+    HAL_Init();
+
+    led0 = 0;
+    led1 = 0;
+    ThisThread::sleep_for(2000ms);
+
+    auto init_sensor = bme688.init();
+    printf(" bme688 sensor successful? %d \n", init_sensor);
+    //Select oversampling for T, P, H
+    bme688.setOversamplingTemperature(2);
+    bme688.setOversamplingPressure(5);
+    bme688.setOversamplingHumidity(1);
+
+    //Select IIR filter for pressure & temperature
+    bme688. setIIRfilterCoefficient(0);
+
+    //Select heater set-points to be used
+    bme688.setHeaterProfile(1);
+
+    //Define heater-on times
+    //Convert durations to register codes
+    //Set gas_wait_x<7:0> (time base unit is ms)
+    bme688.setGasWaitTime(0,25,4);
+    bme688.setMode(0);
+    printf("bme688 config done\n");
+
+    printf("entering infinity\n");
+    
+
+    SystemClock_Config();
+    MX_GPIO_Init();
+
+    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+    HAL_PWREx_EnableLowPowerRunMode();
+    __HAL_RCC_PWR_CLK_DISABLE();
+
+    while( true )
+    {    
+        ThisThread::sleep_for(2000ms);
+    }
+}
+
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+  RCC_OscInitStruct.MSICalibrationValue = RCC_MSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    // Error_Handler();
+  }
+
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK3|RCC_CLOCKTYPE_HCLK
+                              |RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_PCLK1
+                              |RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLK3Divider = RCC_SYSCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    // Error_Handler();
+  }
+}
+
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+
+  GPIO_InitStruct.Pin = GPIO_PIN_All;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
+
+  __HAL_RCC_GPIOA_CLK_DISABLE();
+  __HAL_RCC_GPIOB_CLK_DISABLE();
+  __HAL_RCC_GPIOC_CLK_DISABLE();
+  __HAL_RCC_GPIOH_CLK_DISABLE();
+}
