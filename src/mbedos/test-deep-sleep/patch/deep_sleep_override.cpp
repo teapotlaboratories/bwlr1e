@@ -1,3 +1,8 @@
+/**
+ * Public domain code from https://github.com/ARMmbed/mbed-os/issues/15331
+ * by  hallard (hallard.me)
+ */
+
 #include "hal/static_pinmap.h"
 #include "platform/mbed_critical.h"
 

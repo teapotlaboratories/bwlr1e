@@ -409,7 +409,7 @@ BME680::BME680(PinName sda, PinName scl, bool SDO)
         _addr = 0x77 << 1;
     else _addr = 0x76 << 1;
 
-    _i2c_bus.frequency(FREQUENCY_STANDARD);
+    _i2c_bus.frequency(FREQUENCY_FAST);
 }
 
 bool BME680::init()
@@ -804,15 +804,6 @@ int BME680::getChipID()
     readRegister(0xD0);
     return data[0];
 }
-
-// void BME680::readRegister(int reg, int size)
-// {
-//     uint8_t reg_8bit = reg;
-
-//     _i2c_bus.write ( _addr, (char*)&reg_8bit, 1, true );
-//     _i2c_bus.read  ( _addr, (char*)&data[0], size );
-
-// }
 
 void BME680::readRegister(int reg, int size)
 {
