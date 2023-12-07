@@ -34,7 +34,6 @@ cmake-build-*/
 GettingStarted.html
 
 # mbed build system
-mbed-os/
 mbed_settings.py
 mbed_config.h
 *.pyc
@@ -43,5 +42,3 @@ cmake_build/
 
 BUILD
 .mbed
-mbed-os
-stm32customtargets
