@@ -4,3 +4,10 @@
 [submodule "src/mbedos/test-deep-sleep/stm32customtargets"]
 	path = src/mbedos/test-deep-sleep/stm32customtargets
 	url = git@github.com:teapotlaboratories/stm32customtargets.git
+
+[submodule "src/mbedos/test-bme688/mbed-os"]
+	path = src/mbedos/test-bme688/mbed-os
+	url = git@github.com:teapotlaboratories/mbed-os.git
+[submodule "src/mbedos/test-bme688/stm32customtargets"]
+	path = src/mbedos/test-bme688/stm32customtargets
+	url = git@github.com:teapotlaboratories/stm32customtargets.git
