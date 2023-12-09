@@ -4,9 +4,11 @@
     },
     "target_overrides": {
         "*": {
+            "target.c_lib": "std",
+            "target.printf_lib": "std",
             "platform.cpu-stats-enabled": 0,
             "target.macros_add": ["MBED_TICKLESS", "DEVICE_I2C_FREE_DESTRUCTOR"],
-            "platform.stdio-buffered-serial": 0,
+            "platform.stdio-buffered-serial": 1,
             "platform.stdio-convert-newlines": true,
             "platform.stdio-baud-rate": 115200,
             "platform.default-serial-baud-rate": 115200,
