@@ -28,33 +28,36 @@ class BME688{
 
     public:
         BME688();
-        void start();
-        void doMeasurements();
+        void DoMeasurements();
         dataContainer returnLatest();
         void dumpData();
         uint8_t isNewDataAvailable();
-        void initialise();
+        void Initialise();
     private:
-        typedef enum{SENSOR_STRUCTURE_FAIL, SENSOR_CONFIG_FAIL,
-                     SENSOR_HEATER_FAIL, SENSOR_OPERATION_SEQ_FAIL,
-                     SENSOR_BSEC_FAIL,SENSOR_BSEC_SUBSCRIPTION_FAIL}sensorFailure;
+        typedef enum
+        {
+            SENSOR_STRUCTURE_FAIL,
+            SENSOR_CONFIG_FAIL,
+            SENSOR_HEATER_FAIL,
+            SENSOR_OPERATION_SEQ_FAIL,
+            SENSOR_BSEC_FAIL,
+            SENSOR_BSEC_SUBSCRIPTION_FAIL
+        } sensorFailure;
         
         uint8_t newDataAvailable = 0 ;
         
         void run();
         void _internalThreadFunction();
         dataContainer _dataHolder;
-        uint8_t _initialiseSensorStructure();
-        uint8_t _initialiseSensorFilterSettings();
-        uint8_t _initialiseSensorHeaterSettings();
-        uint8_t _setSequentialMode();
-        uint8_t _startBsec();
-        uint8_t _doBsecSettings();
-        void _processData();
-        void _bsecProcessing();
+        uint8_t InitialiseSensorStructure();
+        uint8_t InitialiseSensorFilterSettings();
+        uint8_t InitialiseSensorHeaterSettings();
+        uint8_t SetSequentialMode();
+        uint8_t StartBsec();
+        uint8_t DoBsecSettings();
+        void ProcessData();
+        void BsecProcessing();
        
-    
-        Thread internalSensorThread;
         //BSEC
         bme68x_data sensorData[3];
         bme68x_dev sensorStructure;

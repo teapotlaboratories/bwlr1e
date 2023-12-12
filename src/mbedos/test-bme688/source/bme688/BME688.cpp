@@ -6,8 +6,8 @@
 
 static EventQueue sensorQueue(5 *EVENTS_EVENT_SIZE);
 static I2C i2cLocal(I2C_SDA,I2C_SCL);
-static int8_t readRegister(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
-static int8_t writeRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
+static int8_t ReadRegister(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
+static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
 static void delay(uint32_t period, void *intf_ptr);
 
 BME688::BME688()
@@ -21,81 +21,66 @@ BME688::BME688()
    
 }
 
-
-
-void BME688::_internalThreadFunction()
-{
-    sensorQueue.dispatch_forever();
-}
-
-
-
-void BME688::doMeasurements()
-{
-    sensorQueue.call_every(500ms,callback(this,&BME688::run));
-}
-
-void BME688::initialise()
+void BME688::Initialise()
 {
     uint8_t rslt;
-    rslt = this->_initialiseSensorStructure();
+    rslt = this->InitialiseSensorStructure();
     if(rslt!=0)
     {
         printf("Error occured at initialising the sensor structure\n\r");
         return;
     }
 
-    rslt = this->_initialiseSensorFilterSettings();
+    rslt = this->InitialiseSensorFilterSettings();
     if(rslt!=0)
     {
         printf("Error occured at initialising the sensor filter settings\n\r");
         return;
     }
 
-    rslt = this->_initialiseSensorHeaterSettings();
+    rslt = this->InitialiseSensorHeaterSettings();
     if(rslt!=0)
     {
         printf("Error occured at initialising the sensor heater settings\n\r");
         return;
     }
     
-    rslt = this->_setSequentialMode();
+    rslt = this->SetSequentialMode();
     if(rslt!=0)
     {
         printf("Error occured at initialising the sensor heater settings\n\r");
         return;
     }
 
-    rslt = this->_startBsec();
+    rslt = this->StartBsec();
     if(rslt!=0)
     {
         printf("Error occured at initialising the BSEC library\n\r");
         return;
     }
 
-    rslt = this->_doBsecSettings();
+    rslt = this->DoBsecSettings();
     if(rslt!=0)
     {
         printf("Error occured at initialising the BSEC library settings\n\r");
         return;
     }
-    internalSensorThread.start(callback(this,&BME688::_internalThreadFunction));
 }
 
 
-void BME688::run()
+void BME688::DoMeasurements()
 {
-    this->_processData();
-    this->_bsecProcessing();
+    this->ProcessData();
+    this->BsecProcessing();
 }
 
 
-uint8_t BME688::_initialiseSensorStructure()
+uint8_t BME688::InitialiseSensorStructure()
 {
     uint8_t rslt;
     sensorStructure.intf     =   BME68X_I2C_INTF;
-    sensorStructure.read     =   readRegister;
-    sensorStructure.write    =   writeRegister;
+    sensorStructure.read     =   ReadRegister;
+    sensorStructure.write    =   WriteRegister;
     sensorStructure.delay_us =   delay;
     rslt = bme68x_init(&sensorStructure);
     if(rslt!=0)
@@ -105,7 +90,7 @@ uint8_t BME688::_initialiseSensorStructure()
     return rslt;
 }
 
-uint8_t BME688::_initialiseSensorFilterSettings()
+uint8_t BME688::InitialiseSensorFilterSettings()
 {
     uint8_t rslt;
     bme68x_get_conf(&sensorConfig,&sensorStructure);
@@ -122,7 +107,7 @@ uint8_t BME688::_initialiseSensorFilterSettings()
     return rslt;
 }
 
-uint8_t BME688::_initialiseSensorHeaterSettings()
+uint8_t BME688::InitialiseSensorHeaterSettings()
 {
     uint8_t rslt;
     sensorHeaterConfig.enable = BME68X_ENABLE;
@@ -138,7 +123,7 @@ uint8_t BME688::_initialiseSensorHeaterSettings()
 }
 
 
-uint8_t BME688::_setSequentialMode()
+uint8_t BME688::SetSequentialMode()
 {
     uint8_t rslt;
     rslt = bme68x_set_op_mode(BME68X_SEQUENTIAL_MODE, &sensorStructure);
@@ -150,7 +135,7 @@ uint8_t BME688::_setSequentialMode()
 }
 
 
-uint8_t BME688::_startBsec()
+uint8_t BME688::StartBsec()
 {
     uint8_t rslt;
     rslt = bsec_init();
@@ -161,7 +146,7 @@ uint8_t BME688::_startBsec()
     return rslt;
 }
 
-uint8_t BME688::_doBsecSettings()
+uint8_t BME688::DoBsecSettings()
 {
     uint8_t rslt;
     requestedVirtualSensors[0].sensor_id = BSEC_OUTPUT_IAQ;
@@ -184,7 +169,7 @@ uint8_t BME688::_doBsecSettings()
     return 0;
 }
 
-void BME688::_processData()
+void BME688::ProcessData()
 {
     uint32_t delayInUs = bme68x_get_meas_dur(BME68X_SEQUENTIAL_MODE, &sensorConfig, &sensorStructure) + (sensorHeaterConfig.heatr_dur_prof[0] * 1000);
     delay(delayInUs,NULL);
@@ -192,7 +177,7 @@ void BME688::_processData()
 }
 
 
-void BME688::_bsecProcessing()
+void BME688::BsecProcessing()
 {
     if (!(sensorData[dataFields - 1].status & BME68X_NEW_DATA_MSK))
         return;
@@ -292,7 +277,7 @@ dataContainer BME688::returnLatest()
     return _dataHolder;
 }
 
-static int8_t readRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
+int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
     int8_t rslt = 0;
     uint32_t aux = 0;
@@ -309,7 +294,7 @@ static int8_t readRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length,
 }
 
 
-static int8_t writeRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr)
+static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr)
 {
 
     int8_t rslt = 0; // Return 0 for Success, non-zero for failure
