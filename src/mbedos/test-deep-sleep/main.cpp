@@ -1,9 +1,20 @@
+/* 
+ * 
+ * Deep-sleep test 
+ * Compiled in `Develop` or Release` build. The following is the expected behavior: 
+ * a. RED LED ( PA1 ) is on for 5 seconds. Consumed around 1.5ma 
+ * b. RED LED ( PA1 ) is off for 10 seconds. Consumed around 10ua 
+ * c. Repeat to inifinity
+ *
+ */
 
 #include <mbed.h>
 #include "external/bme680/BME680.h"
 
 mbed::DigitalOut led0(PA_15);
 mbed::DigitalOut led1(PA_1);
+
+uint32_t sram_data = 0;
 
 int main()
 {
@@ -45,7 +56,16 @@ int main()
     bool read_dummy = sda;
     read_dummy = scl;
 
+    sram_data = 0xfeedbeef;
+
     while (1) {
+        // data should still be retained even after deep-sleep
+        if ( sram_data == 0xfeedbeef){
+            led0 = 1;
+            // go to deep-sleep STOP2
+            ThisThread::sleep_for(5000ms);
+            led0 = 0;
+        }
         ThisThread::sleep_for(10000ms); 
     }
 }
