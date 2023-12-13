@@ -1,212 +1,219 @@
 #include "BME688.h"
+#include "Defer.h"
 
-
-//API requires uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
-
-
-static EventQueue sensorQueue(5 *EVENTS_EVENT_SIZE);
-static I2C i2cLocal(I2C_SDA,I2C_SCL);
 static int8_t ReadRegister(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
 static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
 static void delay(uint32_t period, void *intf_ptr);
 
-BME688::BME688()
+BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr )
 {
-    //Do chip ID check
-    //ThisThread::sleep_for(50ms);
-    _tempProfile[0] = 320;
-    _tempProfile[1] = 320;
-    _durProfile[0] = 150;
-    _durProfile[1] = 150;
-   
+    this->new_data_available = 0;
+    
+    this->i2c_sda = i2c_sda;
+    this->i2c_scl = i2c_scl;
+    this->bme688_addr = bme688_addr;
+    this->bme688_addr_8bit = ( bme688_addr << 1 );
+
+    this->bsec_conf.requested_virtual_sensors_number = BSEC_REQUESTED_VIRTUAL_SENSORS_NUMBER;
+    this->bsec_conf.temperature_offset = BSEC_TEMPERATURE_OFFSET;
+    
+    this->bsec_conf.temp_profile[0] = 320;
+    this->bsec_conf.temp_profile[1] = 320;
+    this->bsec_conf.dur_profile[0] = 150;
+    this->bsec_conf.dur_profile[1] = 150;   
 }
 
-void BME688::Initialise()
+// static I2C i2c_debug( I2C_SDA, I2C_SCL );
+BME688::ReturnCode BME688::Initialise()
 {
-    uint8_t rslt;
-    rslt = this->InitialiseSensorStructure();
-    if(rslt!=0)
+    // this->i2c_local = &i2c_debug;    // set for debugging
+    BME688::ReturnCode result;
+
+    // enable I2C
+    I2C i2c_temp( i2c_sda, i2c_scl );
+    this->i2c_local = &i2c_temp;    // set i2c object for bsec to use
+    Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer setting i2c_local to nullptr at Initialise() return
+
+    // TODO: check chip ID    
+    result = this->InitialiseSensorStructure();
+    if( result != ReturnCode::kOk )
     {
-        printf("Error occured at initialising the sensor structure\n\r");
-        return;
+        return result;
     }
 
-    rslt = this->InitialiseSensorFilterSettings();
-    if(rslt!=0)
+    result = this->InitialiseSensorFilterSettings();
+    if( result != ReturnCode::kOk )
     {
-        printf("Error occured at initialising the sensor filter settings\n\r");
-        return;
+        return result;
     }
 
-    rslt = this->InitialiseSensorHeaterSettings();
-    if(rslt!=0)
+    result = this->InitialiseSensorHeaterSettings();
+    if( result != ReturnCode::kOk )
     {
-        printf("Error occured at initialising the sensor heater settings\n\r");
-        return;
+        return result;
     }
     
-    rslt = this->SetSequentialMode();
-    if(rslt!=0)
+    result = this->SetSequentialMode();
+    if( result != ReturnCode::kOk )
     {
-        printf("Error occured at initialising the sensor heater settings\n\r");
-        return;
+        return result;
     }
 
-    rslt = this->StartBsec();
-    if(rslt!=0)
+    result = this->StartBsec();
+    if( result != ReturnCode::kOk )
     {
-        printf("Error occured at initialising the BSEC library\n\r");
-        return;
+        return result;
     }
 
-    rslt = this->DoBsecSettings();
-    if(rslt!=0)
+    result = this->DoBsecSettings();
+    if( result != ReturnCode::kOk )
     {
-        printf("Error occured at initialising the BSEC library settings\n\r");
-        return;
+        return result;
     }
+
+    return ReturnCode::kOk;
 }
 
 
 void BME688::DoMeasurements()
 {
+    // enable I2C
+    I2C i2c_temp( i2c_sda, i2c_scl );
+    this->i2c_local = &i2c_temp;    // set i2c object for bsec to use
+    Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer setting i2c_local to nullptr at Initialise() return
+
     this->ProcessData();
     this->BsecProcessing();
 }
 
 
-uint8_t BME688::InitialiseSensorStructure()
+BME688::ReturnCode BME688::InitialiseSensorStructure()
 {
-    uint8_t rslt;
-    sensorStructure.intf     =   BME68X_I2C_INTF;
-    sensorStructure.read     =   ReadRegister;
-    sensorStructure.write    =   WriteRegister;
-    sensorStructure.delay_us =   delay;
-    rslt = bme68x_init(&sensorStructure);
-    if(rslt!=0)
-    {
-        return SENSOR_STRUCTURE_FAIL;
-    }
-    return rslt;
-}
-
-uint8_t BME688::InitialiseSensorFilterSettings()
-{
-    uint8_t rslt;
-    bme68x_get_conf(&sensorConfig,&sensorStructure);
-    sensorConfig.filter = BME68X_FILTER_OFF;
-    sensorConfig.odr = BME68X_ODR_NONE;
-    sensorConfig.os_hum = BME68X_OS_16X;
-    sensorConfig.os_pres = BME68X_OS_1X;
-    sensorConfig.os_temp = BME68X_OS_2X;
-    rslt = bme68x_set_conf(&sensorConfig, &sensorStructure);
-    if(rslt!=0)
-    {
-        return SENSOR_CONFIG_FAIL;
-    }
-    return rslt;
-}
-
-uint8_t BME688::InitialiseSensorHeaterSettings()
-{
-    uint8_t rslt;
-    sensorHeaterConfig.enable = BME68X_ENABLE;
-    sensorHeaterConfig.heatr_temp_prof = _tempProfile;
-    sensorHeaterConfig.heatr_dur_prof = _durProfile;
-    sensorHeaterConfig.profile_len = 1;
-    rslt = bme68x_set_heatr_conf(BME68X_SEQUENTIAL_MODE, &sensorHeaterConfig, &sensorStructure);
-    if(rslt!=0)
-    {
-        return SENSOR_HEATER_FAIL;
-    }
-    return rslt;
-}
-
-
-uint8_t BME688::SetSequentialMode()
-{
-    uint8_t rslt;
-    rslt = bme68x_set_op_mode(BME68X_SEQUENTIAL_MODE, &sensorStructure);
-    if(rslt!=0)
-    {
-        return SENSOR_OPERATION_SEQ_FAIL;
-    }
-    return rslt;
-}
-
-
-uint8_t BME688::StartBsec()
-{
-    uint8_t rslt;
-    rslt = bsec_init();
-    if(rslt!=0)
-    {
-        return SENSOR_BSEC_FAIL;
-    }
-    return rslt;
-}
-
-uint8_t BME688::DoBsecSettings()
-{
-    uint8_t rslt;
-    requestedVirtualSensors[0].sensor_id = BSEC_OUTPUT_IAQ;
-    requestedVirtualSensors[0].sample_rate = BSEC_SAMPLE_RATE_LP;
-    requestedVirtualSensors[1].sensor_id = BSEC_OUTPUT_CO2_EQUIVALENT;
-    requestedVirtualSensors[1].sample_rate = BSEC_SAMPLE_RATE_LP;
-    requestedVirtualSensors[2].sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE;
-    requestedVirtualSensors[2].sample_rate = BSEC_SAMPLE_RATE_LP;
-    requestedVirtualSensors[3].sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY;
-    requestedVirtualSensors[3].sample_rate = BSEC_SAMPLE_RATE_LP;
-    bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
-    numberRequiredSensorSettings = BSEC_MAX_PHYSICAL_SENSOR;
-    rslt = bsec_update_subscription(requestedVirtualSensors, requestedVirtualSensorsNumber,
-                             requiredSensorSettings, &numberRequiredSensorSettings);
-    if(rslt!=0)
-    {
-        return SENSOR_BSEC_SUBSCRIPTION_FAIL;
-    }
+    bsec_conf.sensor_structure.intf_ptr =  this;  
+    bsec_conf.sensor_structure.intf     =  BME68X_I2C_INTF;
+    bsec_conf.sensor_structure.read     =  ReadRegister;
+    bsec_conf.sensor_structure.write    =  WriteRegister;
+    bsec_conf.sensor_structure.delay_us =  delay;
     
-    return 0;
+    if( bme68x_init(&bsec_conf.sensor_structure) != 0 )
+    {
+        return BME688::ReturnCode::kSensorStructureFail;
+    }
+    return BME688::ReturnCode::kOk;
 }
 
-void BME688::ProcessData()
+BME688::ReturnCode BME688::InitialiseSensorFilterSettings()
 {
-    uint32_t delayInUs = bme68x_get_meas_dur(BME68X_SEQUENTIAL_MODE, &sensorConfig, &sensorStructure) + (sensorHeaterConfig.heatr_dur_prof[0] * 1000);
+    bme68x_get_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure);
+    bsec_conf.sensor_config.filter = BME68X_FILTER_OFF;
+    bsec_conf.sensor_config.odr = BME68X_ODR_NONE;
+    bsec_conf.sensor_config.os_hum = BME68X_OS_16X;
+    bsec_conf.sensor_config.os_pres = BME68X_OS_1X;
+    bsec_conf.sensor_config.os_temp = BME68X_OS_2X;
+
+    if( bme68x_set_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure) != 0 )
+    {
+        return BME688::ReturnCode::kSensorConfigFail;
+    }
+    return BME688::ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::InitialiseSensorHeaterSettings()
+{
+    bsec_conf.sensor_heater_config.enable = BME68X_ENABLE;
+    bsec_conf.sensor_heater_config.heatr_temp_prof = bsec_conf.temp_profile;
+    bsec_conf.sensor_heater_config.heatr_dur_prof = bsec_conf.dur_profile;
+    bsec_conf.sensor_heater_config.profile_len = 1;
+    
+    if( bme68x_set_heatr_conf(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_heater_config, &bsec_conf.sensor_structure) != 0 )
+    {
+        return BME688::ReturnCode::kSensorHeaterFail;
+    }
+    return BME688::ReturnCode::kOk;
+}
+
+
+BME688::ReturnCode BME688::SetSequentialMode()
+{    
+    if( bme68x_set_op_mode(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_structure) != 0 )
+    {
+        return BME688::ReturnCode::kSensorOperationSeqFail;
+    }
+    return BME688::ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::StartBsec()
+{
+    if( bsec_init() != 0 )
+    {
+        return BME688::ReturnCode::kSensorBsecFail;
+    }
+    return BME688::ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::DoBsecSettings()
+{
+    bsec_conf.requested_virtual_sensors[0].sensor_id = BSEC_OUTPUT_IAQ;
+    bsec_conf.requested_virtual_sensors[0].sample_rate = BSEC_SAMPLE_RATE_LP;
+    bsec_conf.requested_virtual_sensors[1].sensor_id = BSEC_OUTPUT_CO2_EQUIVALENT;
+    bsec_conf.requested_virtual_sensors[1].sample_rate = BSEC_SAMPLE_RATE_LP;
+    bsec_conf.requested_virtual_sensors[2].sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE;
+    bsec_conf.requested_virtual_sensors[2].sample_rate = BSEC_SAMPLE_RATE_LP;
+    bsec_conf.requested_virtual_sensors[3].sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY;
+    bsec_conf.requested_virtual_sensors[3].sample_rate = BSEC_SAMPLE_RATE_LP;
+    bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
+    bsec_conf.number_required_sensor_settings = BSEC_MAX_PHYSICAL_SENSOR;
+
+    if( bsec_update_subscription( bsec_conf.requested_virtual_sensors, bsec_conf.requested_virtual_sensors_number,
+                                  requiredSensorSettings, &bsec_conf.number_required_sensor_settings ) != 0 )
+    {
+        return BME688::ReturnCode::kSensorBsecSubscriptionFail;
+    }
+    return BME688::ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::ProcessData()
+{
+    uint32_t delayInUs = bme68x_get_meas_dur(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_config, &bsec_conf.sensor_structure) + (bsec_conf.sensor_heater_config.heatr_dur_prof[0] * 1000);
     delay(delayInUs,NULL);
-    statusGetData = bme68x_get_data(BME68X_SEQUENTIAL_MODE, sensorData, &dataFields, &sensorStructure);
+    if( bme68x_get_data(BME68X_SEQUENTIAL_MODE, bsec_conf.sensor_data, &bsec_conf.data_fields, &bsec_conf.sensor_structure) != 0 )
+    {
+        return BME688::ReturnCode::kSensorGetDataFail;
+    }
+    return BME688::ReturnCode::kOk;
 }
 
 
 void BME688::BsecProcessing()
 {
-    if (!(sensorData[dataFields - 1].status & BME68X_NEW_DATA_MSK))
+    if (!(bsec_conf.sensor_data[bsec_conf.data_fields - 1].status & BME68X_NEW_DATA_MSK))
         return;
     bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR];
     uint8_t nInputs = 0;;
-    currentTimeInNs = Kernel::get_ms_count() * INT64_C(1000000);
+    bsec_conf.current_time_ns = Kernel::get_ms_count() * INT64_C(1000000);
     inputs[nInputs].sensor_id = BSEC_INPUT_TEMPERATURE;
-    inputs[nInputs].signal = sensorData[dataFields - 1].temperature;
-    inputs[nInputs].time_stamp = currentTimeInNs;
+    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].temperature;
+    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
     nInputs++;
 
     inputs[nInputs].sensor_id = BSEC_INPUT_HUMIDITY;
-    inputs[nInputs].signal = sensorData[dataFields - 1].humidity;
-    inputs[nInputs].time_stamp = currentTimeInNs;
+    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].humidity;
+    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
     nInputs++;
 
     inputs[nInputs].sensor_id = BSEC_INPUT_PRESSURE;
-    inputs[nInputs].signal = sensorData[dataFields - 1].pressure;
-    inputs[nInputs].time_stamp = currentTimeInNs;
+    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].pressure;
+    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
     nInputs++;
 
     inputs[nInputs].sensor_id = BSEC_INPUT_GASRESISTOR;
-    inputs[nInputs].signal = sensorData[dataFields - 1].gas_resistance;
-    inputs[nInputs].time_stamp = currentTimeInNs;
+    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].gas_resistance;
+    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
     nInputs++;
 
     inputs[nInputs].sensor_id = BSEC_INPUT_HEATSOURCE;
-    inputs[nInputs].signal = temperatureOffset;
-    inputs[nInputs].time_stamp = currentTimeInNs;
+    inputs[nInputs].signal = bsec_conf.temperature_offset;
+    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
 
     
     uint8_t nOutputs = 0;
@@ -222,24 +229,24 @@ void BME688::BsecProcessing()
     }
     if (nOutputs > 0)
     {
-        newDataAvailable = 1;
+        new_data_available = true;
         for (uint8_t i = 0; i < nOutputs; i++)
         {
             switch (outputStorage[i].sensor_id)
             {
             case BSEC_OUTPUT_IAQ:
-                _dataHolder.IAQ = outputStorage[i].signal;
-                _dataHolder.IAQAccuracy = outputStorage[i].accuracy;
+                sensor_data.iaq = outputStorage[i].signal;
+                sensor_data.iaq_accuracy = outputStorage[i].accuracy;
                 break;
             case BSEC_OUTPUT_CO2_EQUIVALENT:
-                _dataHolder.CO2 = outputStorage[i].signal;
-                _dataHolder.CO2Accuracy = outputStorage[i].accuracy;
+                sensor_data.co2 = outputStorage[i].signal;
+                sensor_data.co2_accuracy = outputStorage[i].accuracy;
                 break;
             case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-                _dataHolder.temperature = outputStorage[i].signal;
+                sensor_data.temperature = outputStorage[i].signal;
                 break;
             case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-                _dataHolder.humidity = outputStorage[i].signal;
+                sensor_data.humidity = outputStorage[i].signal;
                 break;
             default:
                 break;
@@ -248,71 +255,86 @@ void BME688::BsecProcessing()
     }
     else
     {
-        newDataAvailable = 0;
+        new_data_available = false;
     }
 }
 
-void BME688::dumpData()
+void BME688::DumpData()
 {
-    printf("Temperature:%2.1f *C\n\r",_dataHolder.temperature);
-    printf("Humidity:%2.1f\n\r",_dataHolder.humidity);
-    printf("CO2:%2.1f\n\r",_dataHolder.CO2);
-    printf("CO2 Accuracy:%d\n\r",_dataHolder.CO2Accuracy);
-    printf("IAQ:%2.1f\n\r",_dataHolder.IAQ);
-    printf("IAQ Accuracy:%d",_dataHolder.IAQAccuracy);
+    printf("Temperature:%2.1f *C\n\r",sensor_data.temperature);
+    printf("Humidity:%2.1f\n\r",sensor_data.humidity);
+    printf("CO2:%2.1f\n\r",sensor_data.co2);
+    printf("CO2 Accuracy:%d\n\r",sensor_data.co2_accuracy);
+    printf("IAQ:%2.1f\n\r",sensor_data.iaq);
+    printf("IAQ Accuracy:%d",sensor_data.iaq_accuracy);
 }
 
-uint8_t BME688::isNewDataAvailable()
+bool BME688::isNewDataAvailable()
 {
-    if(newDataAvailable == 1)
-        return 1;
-    else
-        return 0;
-    
+    return new_data_available;    
 }
 
 
-dataContainer BME688::returnLatest()
+BME688::SensorData BME688::GetLatest()
 {
-    return _dataHolder;
+    return sensor_data;
 }
+
+// Static function
 
 int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
-    int8_t rslt = 0;
-    uint32_t aux = 0;
-    aux      =   i2cLocal.write ( BME688_ADDRESS, (char*)&reg_addr, 1, true );
-    aux      =   i2cLocal.read  ( BME688_ADDRESS, (char*)&reg_data[0], length );
-    if ( aux == 0 ) {
-        rslt     =   0;
-    } else {
-        rslt     =   0xFF;
+    BME688* bme688 = (BME688*) intf_ptr;
+    if( bme688->i2c_local == nullptr )
+    {
+        // return error
+        return 0xFF;
     }
+    
+    // local variable definition
+      int8_t rslt = 0; // Return 0 for Success, non-zero for failure
+    uint32_t aux  = 0;
+    aux = bme688->i2c_local->write ( bme688->bme688_addr_8bit, (char*)&reg_addr, 1, true );
+    if ( aux != 0 ) {
+        return 0xFF; // return error
+    } 
+
+    aux = bme688->i2c_local->read  ( bme688->bme688_addr_8bit, (char*)&reg_data[0], length );
+    if ( aux != 0 ) {
+        return 0xFF; // return error
+    } 
  
     return rslt;
-
 }
 
 
-static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr)
+static int8_t WriteRegister(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
+    // check callback obeject pointer
+    BME688* bme688 = (BME688*) intf_ptr;
+    if( bme688->i2c_local == nullptr )
+    {
+        return 0xFF; // return error
+    }
 
-    int8_t rslt = 0; // Return 0 for Success, non-zero for failure
-    uint32_t     aux     =   0;
-    char         cmd[16] =  { 0 };
-    uint32_t     i       =   0;
+    // local variable definition
+      int8_t rslt    = 0; // Return 0 for Success, non-zero for failure
+    uint32_t aux     = 0;
+        char cmd[16] = {0};
+    uint32_t i       = 0;
+
     // Prepare the data to be sent
-    cmd[0]   =   reg_addr;
+    cmd[0] = reg_addr;
     for ( i = 1; i <= length; i++ ) {
-        cmd[i]   =   reg_data[i - 1];
+        cmd[i] = reg_data[i - 1];
     }
+
     // Write data
-    aux      =   i2cLocal.write( BME688_ADDRESS, &cmd[0], length + 1, false );
-    if ( aux == 0 ) {
-        rslt     =   0;
-    } else {
-        rslt     =   0xFF;
-    }
+    aux = bme688->i2c_local->write( bme688->bme688_addr_8bit, &cmd[0], length + 1, false );
+    if ( aux != 0 ) {
+        return 0xFF; // return error
+    } 
+
     return rslt;
 }
 

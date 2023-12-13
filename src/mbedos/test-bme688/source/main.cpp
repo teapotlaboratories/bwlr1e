@@ -2,12 +2,13 @@
 #include <stdio.h>
 
 #include "bme688/BME688.h"
+#include "bme688/Defer.h"
 
 static EventQueue mainThread(5 *EVENTS_EVENT_SIZE);
 
 mbed::DigitalOut led0(PA_15);
 mbed::DigitalOut led1(PA_1);
-BME688 iaq_sensor;
+BME688 iaq_sensor( I2C_SDA, I2C_SCL, 0x77 );
 
 void checkDataAndPost();
 
@@ -17,9 +18,11 @@ int main()
     led0 = 0;
     led1 = 0;
 
-    iaq_sensor.Initialise();
-    iaq_sensor.DoMeasurements();
-    mainThread.call_every(15s, checkDataAndPost );
+    BME688::ReturnCode result;
+
+    result = iaq_sensor.Initialise();
+    mainThread.call_every( 500ms, callback( &iaq_sensor, &BME688::DoMeasurements ) );
+    mainThread.call_every( 15s, checkDataAndPost );
 
     mainThread.dispatch_forever();
 }
@@ -30,7 +33,7 @@ void checkDataAndPost()
     if(iaq_sensor.isNewDataAvailable())
     {
         printf("data available!\n\r"); 
-        iaq_sensor.dumpData();
+        iaq_sensor.DumpData();
     }
 }
 

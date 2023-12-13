@@ -8,74 +8,86 @@
 #include "bme68x.h"
 
 #define BME688_CHIP_ID_LOCATION 0xD0
-#define BME688_ADDRESS 0x77 << 1
-
-// int8_t readRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr);
-// int8_t writeRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
-// void delay(uint32_t period, void *intf_ptr);
-
-struct dataContainer
-{
-    float temperature;
-    float humidity;
-    float CO2;
-    uint8_t CO2Accuracy;
-    float IAQ;
-    uint8_t IAQAccuracy;
-};
+#define BSEC_REQUESTED_VIRTUAL_SENSORS_NUMBER 4
+#define BSEC_TEMPERATURE_OFFSET 7.0f
 
 class BME688{
 
+    // enum and struct definition
     public:
-        BME688();
-        void DoMeasurements();
-        dataContainer returnLatest();
-        void dumpData();
-        uint8_t isNewDataAvailable();
-        void Initialise();
-    private:
-        typedef enum
+        enum class ReturnCode
         {
-            SENSOR_STRUCTURE_FAIL,
-            SENSOR_CONFIG_FAIL,
-            SENSOR_HEATER_FAIL,
-            SENSOR_OPERATION_SEQ_FAIL,
-            SENSOR_BSEC_FAIL,
-            SENSOR_BSEC_SUBSCRIPTION_FAIL
-        } sensorFailure;
-        
-        uint8_t newDataAvailable = 0 ;
-        
-        void run();
-        void _internalThreadFunction();
-        dataContainer _dataHolder;
-        uint8_t InitialiseSensorStructure();
-        uint8_t InitialiseSensorFilterSettings();
-        uint8_t InitialiseSensorHeaterSettings();
-        uint8_t SetSequentialMode();
-        uint8_t StartBsec();
-        uint8_t DoBsecSettings();
-        void ProcessData();
-        void BsecProcessing();
-       
-        //BSEC
-        bme68x_data sensorData[3];
-        bme68x_dev sensorStructure;
-        bme68x_conf sensorConfig;
-        bme68x_heatr_conf sensorHeaterConfig;    
-        uint8_t dataFields;
-        bsec_sensor_configuration_t requestedVirtualSensors[4];
-        uint8_t numberRequiredSensorSettings;
-        uint8_t requestedVirtualSensorsNumber = 4;
-        int64_t currentTimeInNs;
-        bsec_output_t outputs[BSEC_NUMBER_OUTPUTS];
-        const float temperatureOffset = 7.0f;
-        bool _newDataAvailable;
-        uint16_t _tempProfile[2];
-        uint16_t _durProfile[2];
-        
-        //BME68X General API
-        uint8_t statusGetData;
+            // success code
+            kOk = 0,
+            // error code
+            kError,
+            kSensorStructureFail,
+            kSensorConfigFail,
+            kSensorHeaterFail,
+            kSensorOperationSeqFail,
+            kSensorBsecFail,
+            kSensorBsecSubscriptionFail,
+            kSensorGetDataFail,
+        };
+
+        // processed sensor output
+        struct SensorData
+        {
+            float   temperature;
+            float   humidity;
+            float   co2;
+            uint8_t co2_accuracy;
+            float   iaq;
+            uint8_t iaq_accuracy;
+        };
+
+        // internal bsec configuration
+        struct BsecConfiguration
+        {            
+            bme68x_data                 sensor_data[3];
+            bme68x_dev                  sensor_structure;
+            bme68x_conf                 sensor_config;
+            bme68x_heatr_conf           sensor_heater_config;    
+            uint8_t                     data_fields;
+            bsec_sensor_configuration_t requested_virtual_sensors[4];
+            uint8_t                     number_required_sensor_settings;
+            uint8_t                     requested_virtual_sensors_number;
+            int64_t                     current_time_ns;
+            bsec_output_t               outputs[BSEC_NUMBER_OUTPUTS];
+            float                       temperature_offset;
+            bool                        new_data_available;
+            uint16_t                    temp_profile[2];
+            uint16_t                    dur_profile[2];
+        };
+
+    public:
+        bool     new_data_available;
+        uint32_t bme688_addr;
+        uint32_t bme688_addr_8bit;
+        PinName  i2c_sda;
+        PinName  i2c_scl;
+        I2C*     i2c_local;
+    
+        BME688      ( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr );
+        void        DoMeasurements();
+        SensorData  GetLatest();
+        bool        isNewDataAvailable();
+        ReturnCode  Initialise();
+        void        DumpData();
+
+    private:    
+        // bsec internal variables
+        BME688::BsecConfiguration bsec_conf;
+        SensorData                sensor_data;
+
+        ReturnCode InitialiseSensorStructure();
+        ReturnCode InitialiseSensorFilterSettings();
+        ReturnCode InitialiseSensorHeaterSettings();
+        ReturnCode SetSequentialMode();
+        ReturnCode StartBsec();
+        ReturnCode DoBsecSettings();
+        ReturnCode ProcessData();
+        void       BsecProcessing();
 };
 
 
