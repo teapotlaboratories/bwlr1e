@@ -71,7 +71,7 @@ class BME688{
         BME688      ( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr );
         void        DoMeasurements();
         SensorData  GetLatest();
-        bool        isNewDataAvailable();
+        bool        IsNewDataAvailable();
         ReturnCode  Initialise();
         void        DumpData();
 

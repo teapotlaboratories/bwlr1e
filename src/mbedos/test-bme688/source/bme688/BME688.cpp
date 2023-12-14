@@ -269,7 +269,7 @@ void BME688::DumpData()
     printf("IAQ Accuracy:%d",sensor_data.iaq_accuracy);
 }
 
-bool BME688::isNewDataAvailable()
+bool BME688::IsNewDataAvailable()
 {
     return new_data_available;    
 }

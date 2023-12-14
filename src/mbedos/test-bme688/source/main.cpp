@@ -48,7 +48,7 @@ int main()
     {
         ThisThread::sleep_for(15s);        
         printf("checking if data is available\n\r");
-        if(iaq_sensor.isNewDataAvailable())
+        if(iaq_sensor.IsNewDataAvailable())
         {
             // toggle pin if new data found
             led0 = !led0;
