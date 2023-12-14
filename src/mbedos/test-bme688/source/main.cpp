@@ -1,123 +1,72 @@
 #include "mbed.h"
-#include <stdio.h>
-
 #include "bme688/BME688.h"
-#include "bme688/Defer.h"
 
-static EventQueue mainThread(5 *EVENTS_EVENT_SIZE);
+#define FEATHER_RAK3172
+// #define BWLR1E
 
+// define on-board led to use
+#ifdef FEATHER_RAK3172
+mbed::DigitalOut led0(PA_8);
+#endif
+#ifdef BWLR1E
 mbed::DigitalOut led0(PA_15);
 mbed::DigitalOut led1(PA_1);
-BME688 iaq_sensor( I2C_SDA, I2C_SCL, 0x77 );
+#endif
 
-void checkDataAndPost();
+// Spawns a thread to measurement every 500ms
+Thread measure_thread;
+
+// measure environment 
+static void measure(BME688* bme688);
 
 int main()
 {
-    // disable on-board led
+
+// turn-off led for now
     led0 = 0;
-    led1 = 0;
+#ifdef BWLR1E
+    led01 = 0;
+#endif
 
-    BME688::ReturnCode result;
+    // initialise bmr688
+    BME688 iaq_sensor( I2C_SDA, I2C_SCL, 0x77 );
+    BME688::ReturnCode result = iaq_sensor.Initialise();
+    if( result != BME688::ReturnCode::kOk )
+    {
+        while( true )
+        {
+            // blink led infinity to indicate bme688
+            // fail to initialise
+            ThisThread::sleep_for(500ms);
+            led0 = !led0;
+        }
+    }
 
-    result = iaq_sensor.Initialise();
-    mainThread.call_every( 500ms, callback( &iaq_sensor, &BME688::DoMeasurements ) );
-    mainThread.call_every( 15s, checkDataAndPost );
-
-    mainThread.dispatch_forever();
+    // start measurement thread
+    measure_thread.start(callback(measure, &iaq_sensor));
+    while ( true )
+    {
+        ThisThread::sleep_for(15s);        
+        printf("checking if data is available\n\r");
+        if(iaq_sensor.isNewDataAvailable())
+        {
+            // toggle pin if new data found
+            led0 = !led0;
+            printf("data available!\n\r"); 
+            
+            // enable platform.stdio-buffered-serial in mbed_app.json 
+            // to see the dumped data
+            iaq_sensor.DumpData();
+        }
+    }
+    measure_thread.join();
 }
 
-void checkDataAndPost()
+// measure environment 
+void measure(BME688* bme688)
 {
-    printf("checking if data is available\n\r");
-    if(iaq_sensor.isNewDataAvailable())
-    {
-        printf("data available!\n\r"); 
-        iaq_sensor.DumpData();
+    while ( true ) {
+        bme688->DoMeasurements();
+        ThisThread::sleep_for(500ms);
     }
 }
-
-// /*
-//  * Copyright (c) 2020 Arm Limited and affiliates.
-//  * SPDX-License-Identifier: Apache-2.0
-//  */
-// #include "mbed.h"
-
-// Thread thread;
-// mbed::DigitalOut led0(PA_1);
-// DigitalOut led1(PA_15);
-// volatile bool running = true;
-
-// // Blink function toggles the led in a long running loop
-// void blink(DigitalOut *led)
-// {
-//     while (running) {
-//         // *led = !*led;
-//         ThisThread::sleep_for(1000ms);
-//     }
-// }
-
-// // Spawns a thread to run blink for 5 seconds
-// int main()
-// {
-//     led0 = 0;
-//     led1 = 0;
-//     thread.start(callback(blink, &led1));
-//     while ( 1 )
-//     {
-//         ThisThread::sleep_for(5000ms);
-//     }
-//     // running = false;
-//     thread.join();
-// }
-
-
-// /* 
-//  * Deep-sleep test 
-//  * Compiled in `Develop` or Release` build. The following is the expected behavior: 
-//  * a. RED LED ( PA1 ) is on for 5 seconds. Consumed around 1.5ma 
-//  * b. RED LED ( PA1 ) is off for 10 seconds. Consumed around 10ua 
-//  * c. Repeat to inifinity
-//  *
-//  */
-
-// #include <mbed.h>
-// // #include "bme680/BME680.h"
-
-// mbed::DigitalOut led0(PA_15);
-// mbed::DigitalOut led1(PA_1);
-
-// uint32_t sram_data = 0;
-
-// int main()
-// {
-//     // disable on-board LED
-//     led0 = 0;
-//     led1 = 0;
-
-//     // I2C driver need to be free, when not used. BME680 object is in a scoped area
-//     // so that once it exits, the object is destroyed and I2C is freed.
-//     // this feature is not in upstream mbed-os sdk. see readme for more details.
-//     {
-//         I2C i2c(I2C_SDA, I2C_SCL);
-//     }
-    
-//     // set I2C pin as high-impedance
-//     mbed::DigitalIn sda(I2C_SDA);
-//     mbed::DigitalIn scl(I2C_SCL);
-//     bool read_dummy = sda;
-//     read_dummy = scl;
-
-//     sram_data = 0xfeedbeef;
-
-//     while (1) {
-//         // data should still be retained even after deep-sleep
-//         if ( sram_data == 0xfeedbeef){
-//             led0 = 1;
-//             // go to deep-sleep STOP2
-//             ThisThread::sleep_for(1000ms);
-//             led0 = 0;
-//         }
-//         ThisThread::sleep_for(10000ms); 
-//     }
-// }

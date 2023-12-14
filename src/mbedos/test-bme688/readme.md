@@ -12,11 +12,11 @@ Source code is based on https://github.com/Mircerson/AERQ
 
 ## TODO
 
-- [ ] Update BSEC library to use the latest version
-- [ ] Provide BSEC static library
+- [x] Update BSEC library to use the latest version
+- [x] Provide BSEC static library
   - `libalgobsec.a` for GCC_ARM
   - `libalgobsec.ar` for ARMC6 ( currently rename the .lib file to .ar from the BSEC library)
   - STM32WL55CC is Cortex-M4
-- [ ] Implement simple AQI reader without proper sleep
+- [x] Implement simple AQI reader without proper sleep
 - [ ] Rewrite BME688 high-level library
 - [ ] Create a different repo for proper AQI reader with sleep
