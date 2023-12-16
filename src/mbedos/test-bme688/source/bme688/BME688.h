@@ -24,6 +24,7 @@ class BME688{
             kSensorStructureFail,
             kSensorConfigFail,
             kSensorHeaterFail,
+            kSensorSetOperationFail,
             kSensorOperationSeqFail,
             kSensorBsecFail,
             kSensorBsecSubscriptionFail,
@@ -44,10 +45,14 @@ class BME688{
         // internal bsec configuration
         struct BsecConfiguration
         {            
+            // sensor configuration
             bme68x_data                 sensor_data[3];
             bme68x_dev                  sensor_structure;
             bme68x_conf                 sensor_config;
-            bme68x_heatr_conf           sensor_heater_config;    
+            bme68x_heatr_conf           sensor_heater_config;
+            uint8_t                     last_op_mode; 
+
+            // bsec libray configuration
             uint8_t                     data_fields;
             bsec_sensor_configuration_t requested_virtual_sensors[4];
             uint8_t                     number_required_sensor_settings;
@@ -80,12 +85,19 @@ class BME688{
         BME688::BsecConfiguration bsec_conf;
         SensorData                sensor_data;
 
-        ReturnCode InitialiseSensorStructure();
+        // BME688 sensor specific method
+        ReturnCode InitialiseSensor();
         ReturnCode InitialiseSensorFilterSettings();
         ReturnCode InitialiseSensorHeaterSettings();
         ReturnCode SetSequentialMode();
-        ReturnCode StartBsec();
-        ReturnCode DoBsecSettings();
+        ReturnCode SetTphOverSampling(uint8_t os_temp, uint8_t os_pres, uint8_t os_hum);
+        ReturnCode SetOperationMode(uint8_t opMode);
+        ReturnCode SetHeaterProfile(uint16_t temp, uint16_t dur);
+        uint32_t GetMeasurementDuration(uint8_t op_mode);
+
+        // BSEC specific method
+        ReturnCode InitialiseBsec();
+        ReturnCode UpdateSubscription();
         ReturnCode ProcessData();
         void       BsecProcessing();
 };

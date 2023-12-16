@@ -23,24 +23,23 @@ BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr )
     this->bsec_conf.dur_profile[1] = 150;   
 }
 
-// static I2C i2c_debug( I2C_SDA, I2C_SCL );
 BME688::ReturnCode BME688::Initialise()
 {
-    // this->i2c_local = &i2c_debug;    // set for debugging
     BME688::ReturnCode result;
 
     // enable I2C
-    I2C i2c_temp( i2c_sda, i2c_scl );
+    I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
     this->i2c_local = &i2c_temp;    // set i2c object for bsec to use
     Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer setting i2c_local to nullptr at Initialise() return
 
     // TODO: check chip ID    
-    result = this->InitialiseSensorStructure();
+    result = this->InitialiseSensor();
     if( result != ReturnCode::kOk )
     {
         return result;
     }
 
+    // this is not mentiond in the doc
     result = this->InitialiseSensorFilterSettings();
     if( result != ReturnCode::kOk )
     {
@@ -58,14 +57,15 @@ BME688::ReturnCode BME688::Initialise()
     {
         return result;
     }
+    // this is not mentiond in the doc
 
-    result = this->StartBsec();
+    result = this->InitialiseBsec();
     if( result != ReturnCode::kOk )
     {
         return result;
     }
 
-    result = this->DoBsecSettings();
+    result = this->UpdateSubscription();
     if( result != ReturnCode::kOk )
     {
         return result;
@@ -87,13 +87,14 @@ void BME688::DoMeasurements()
 }
 
 
-BME688::ReturnCode BME688::InitialiseSensorStructure()
+BME688::ReturnCode BME688::InitialiseSensor()
 {
     bsec_conf.sensor_structure.intf_ptr =  this;  
     bsec_conf.sensor_structure.intf     =  BME68X_I2C_INTF;
     bsec_conf.sensor_structure.read     =  ReadRegister;
     bsec_conf.sensor_structure.write    =  WriteRegister;
     bsec_conf.sensor_structure.delay_us =  delay;
+    bsec_conf.sensor_structure.amb_temp =  25; // used in arduino example
     
     if( bme68x_init(&bsec_conf.sensor_structure) != 0 )
     {
@@ -142,7 +143,7 @@ BME688::ReturnCode BME688::SetSequentialMode()
     return BME688::ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::StartBsec()
+BME688::ReturnCode BME688::InitialiseBsec()
 {
     if( bsec_init() != 0 )
     {
@@ -151,7 +152,7 @@ BME688::ReturnCode BME688::StartBsec()
     return BME688::ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::DoBsecSettings()
+BME688::ReturnCode BME688::UpdateSubscription()
 {
     bsec_conf.requested_virtual_sensors[0].sensor_id = BSEC_OUTPUT_IAQ;
     bsec_conf.requested_virtual_sensors[0].sample_rate = BSEC_SAMPLE_RATE_LP;
@@ -164,8 +165,10 @@ BME688::ReturnCode BME688::DoBsecSettings()
     bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
     bsec_conf.number_required_sensor_settings = BSEC_MAX_PHYSICAL_SENSOR;
 
-    if( bsec_update_subscription( bsec_conf.requested_virtual_sensors, bsec_conf.requested_virtual_sensors_number,
-                                  requiredSensorSettings, &bsec_conf.number_required_sensor_settings ) != 0 )
+    if( bsec_update_subscription( bsec_conf.requested_virtual_sensors, 
+                                  bsec_conf.requested_virtual_sensors_number,
+                                  requiredSensorSettings, 
+                                  &bsec_conf.number_required_sensor_settings ) != 0 )
     {
         return BME688::ReturnCode::kSensorBsecSubscriptionFail;
     }
@@ -278,6 +281,104 @@ bool BME688::IsNewDataAvailable()
 BME688::SensorData BME688::GetLatest()
 {
     return sensor_data;
+}
+
+/**
+ *  Below is the first effort to re-implement BSEC2 Arduino library
+ *
+ */
+
+// /**
+//  * @brief Set the BME68X sensor configuration to forced mode
+//  */
+// void Bsec2::setBme68xConfigForced(void)
+// {
+//     /* Set the filter, odr, temperature, pressure and humidity settings */
+    
+//     sensor.setTPH(bmeConf.temperature_oversampling, bmeConf.pressure_oversampling, bmeConf.humidity_oversampling);
+
+//     if (sensor.checkStatus() == BME68X_ERROR)
+//         return;
+
+//     sensor.setHeaterProf(bmeConf.heater_temperature, bmeConf.heater_duration);
+
+//     if (sensor.checkStatus() == BME68X_ERROR)
+//         return;
+
+//     sensor.setOpMode(BME68X_FORCED_MODE);
+//     if (sensor.checkStatus() == BME68X_ERROR)
+//         return;
+
+//     opMode = BME68X_FORCED_MODE;
+// }
+
+/**
+ * @brief Function to set the Temperature, Pressure and Humidity over-sampling
+ */
+BME688::ReturnCode BME688::SetTphOverSampling(uint8_t os_temp, uint8_t os_pres, uint8_t os_hum)
+{
+    if( bme68x_get_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure) == BME68X_OK )
+    {
+        
+        bsec_conf.sensor_config.os_hum = os_hum;
+        bsec_conf.sensor_config.os_pres = os_pres;
+        bsec_conf.sensor_config.os_temp = os_temp;
+        if( bme68x_set_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure) == BME68X_OK )
+        {
+            return BME688::ReturnCode::kOk;
+        }
+    }
+
+    return BME688::ReturnCode::kError;
+}
+
+/**
+ * @brief Function to set the heater profile for Forced mode
+ */
+BME688::ReturnCode BME688::SetHeaterProfile(uint16_t temp, uint16_t dur)
+{
+
+    bsec_conf.sensor_heater_config.enable = BME68X_ENABLE;
+    bsec_conf.sensor_heater_config.heatr_temp = temp;
+    bsec_conf.sensor_heater_config.heatr_dur = dur;
+    if( bme68x_set_heatr_conf(BME68X_FORCED_MODE, &bsec_conf.sensor_heater_config, &bsec_conf.sensor_structure) == BME68X_OK )
+    {
+        return BME688::ReturnCode::kOk;
+    }
+
+    return BME688::ReturnCode::kSensorHeaterFail;
+}
+
+/**
+ * @brief Function to set the operation mode
+ */
+BME688::ReturnCode BME688::SetOperationMode(uint8_t op_mode)
+{
+    int8_t status = bme68x_set_op_mode(op_mode, &bsec_conf.sensor_structure);
+	if( (status == BME68X_OK) && 
+        (op_mode != BME68X_SLEEP_MODE) )
+    {
+		this->bsec_conf.last_op_mode = op_mode;
+    }
+
+    if( status == BME68X_OK )
+    {
+        return BME688::ReturnCode::kOk;
+    }
+    return BME688::ReturnCode::kSensorSetOperationFail;
+}
+
+/**
+ * @brief Function to get the measurement duration in microseconds
+ */
+uint32_t BME688::GetMeasurementDuration(uint8_t op_mode)
+{
+	if (op_mode == BME68X_SLEEP_MODE)
+    {
+		op_mode = this->bsec_conf.last_op_mode;
+    }
+
+	return bme68x_get_meas_dur(op_mode, &bsec_conf.sensor_config, &bsec_conf.sensor_structure);
 }
 
 // Static function
