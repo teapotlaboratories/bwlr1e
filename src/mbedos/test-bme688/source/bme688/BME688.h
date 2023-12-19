@@ -6,6 +6,7 @@
 #include "bsec_interface.h"
 #include "bsec_datatypes.h"
 #include "bme68x.h"
+#include "ArrayPointer.h"
 
 #define BME688_CHIP_ID_LOCATION 0xD0
 #define BSEC_REQUESTED_VIRTUAL_SENSORS_NUMBER 4
@@ -99,8 +100,8 @@ class BME688{
         ReturnCode SetOperationMode(const uint8_t op_mode);
         ReturnCode SetHeaterProfile( const uint16_t temp, 
                                      const uint16_t dur );
-        ReturnCode SetHeaterProfile( uint16_t* const temp,
-                                     uint16_t* const mul, 
+        ReturnCode SetHeaterProfile( const ArrayPointer<uint16_t>& temp,
+                                     const ArrayPointer<uint16_t>& mul, 
                                      const uint16_t sharedHeatrDur, 
                                      const uint8_t profileLen );
         uint32_t GetMeasurementDuration(const uint8_t op_mode);

@@ -1,5 +1,5 @@
-#ifndef __DEFER__H
-#define __DEFER__H
+#ifndef DEFER_H
+#define DEFER_H
 
 template <class T>
 class Defer
