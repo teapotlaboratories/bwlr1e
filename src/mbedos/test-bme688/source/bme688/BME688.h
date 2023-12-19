@@ -10,6 +10,7 @@
 #define BME688_CHIP_ID_LOCATION 0xD0
 #define BSEC_REQUESTED_VIRTUAL_SENSORS_NUMBER 4
 #define BSEC_TEMPERATURE_OFFSET 7.0f
+#define BSEC_TOTAL_HEAT_DUR UINT16_C(140)
 
 class BME688{
 
@@ -53,6 +54,8 @@ class BME688{
             uint8_t                     last_op_mode; 
 
             // bsec libray configuration
+            bsec_bme_settings_t         bme_conf;
+            uint8_t                     op_mode; // current sensor operation mode
             uint8_t                     data_fields;
             bsec_sensor_configuration_t requested_virtual_sensors[4];
             uint8_t                     number_required_sensor_settings;
@@ -90,16 +93,25 @@ class BME688{
         ReturnCode InitialiseSensorFilterSettings();
         ReturnCode InitialiseSensorHeaterSettings();
         ReturnCode SetSequentialMode();
-        ReturnCode SetTphOverSampling(uint8_t os_temp, uint8_t os_pres, uint8_t os_hum);
-        ReturnCode SetOperationMode(uint8_t opMode);
-        ReturnCode SetHeaterProfile(uint16_t temp, uint16_t dur);
-        uint32_t GetMeasurementDuration(uint8_t op_mode);
+        ReturnCode SetTphOverSampling( const uint8_t os_temp, 
+                                       const uint8_t os_pres, 
+                                       const uint8_t os_hum );
+        ReturnCode SetOperationMode(const uint8_t op_mode);
+        ReturnCode SetHeaterProfile( const uint16_t temp, 
+                                     const uint16_t dur );
+        ReturnCode SetHeaterProfile( uint16_t* const temp,
+                                     uint16_t* const mul, 
+                                     const uint16_t sharedHeatrDur, 
+                                     const uint8_t profileLen );
+        uint32_t GetMeasurementDuration(const uint8_t op_mode);
 
         // BSEC specific method
         ReturnCode InitialiseBsec();
         ReturnCode UpdateSubscription();
         ReturnCode ProcessData();
         void       BsecProcessing();
+        ReturnCode SetBme68xConfigForced( const bsec_bme_settings_t& bsec_bme_conf );
+        ReturnCode SetBme68xConfigParallel( bsec_bme_settings_t& bsec_bme_conf );
 };
 
 
