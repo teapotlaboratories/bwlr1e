@@ -346,8 +346,8 @@ BME688::ReturnCode BME688::SetBme68xConfigParallel( const bsec_bme_settings_t& b
     shared_heater_dur = BSEC_TOTAL_HEAT_DUR - (GetMeasurementDuration(BME68X_PARALLEL_MODE) / INT64_C(1000));
 
     // set heater profile
-    status = SetHeaterProfile( ArrayPointer<uint16_t>((uint16_t*) bsec_bme_conf.heater_temperature_profile, sizeof(bsec_bme_conf.heater_temperature_profile)), 
-                               ArrayPointer<uint16_t>((uint16_t*) bsec_bme_conf.heater_duration_profile, sizeof(bsec_bme_conf.heater_duration_profile)),
+    status = SetHeaterProfile( (uint16_t*) bsec_bme_conf.heater_temperature_profile, 
+                               (uint16_t*) bsec_bme_conf.heater_duration_profile,
                                shared_heater_dur,
                                bsec_bme_conf.heater_profile_len );
     if( status != ReturnCode::kOk )
@@ -412,16 +412,16 @@ BME688::ReturnCode BME688::SetHeaterProfile( const uint16_t temp,
 /**
  * @brief Function to set the heater profile for Parallel mode
  */
-BME688::ReturnCode BME688::SetHeaterProfile( const ArrayPointer<uint16_t>& temp, 
-                                             const ArrayPointer<uint16_t>& mul, 
+BME688::ReturnCode BME688::SetHeaterProfile( uint16_t* const temp, 
+                                             uint16_t* const mul, 
                                              const uint16_t shared_heater_dur, 
                                              const uint8_t profile_len )
 {
     bme68x_heatr_conf heater_conf
     {
         .enable = BME68X_ENABLE,
-        .heatr_temp_prof = temp.ptr,
-        .heatr_dur_prof = mul.ptr,
+        .heatr_temp_prof = temp,
+        .heatr_dur_prof = mul,
         .profile_len = profile_len,
         .shared_heatr_dur = shared_heater_dur
     };
