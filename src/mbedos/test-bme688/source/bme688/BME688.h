@@ -111,7 +111,7 @@ class BME688{
         ReturnCode ProcessData();
         void       BsecProcessing();
         ReturnCode SetBme68xConfigForced( const bsec_bme_settings_t& bsec_bme_conf );
-        ReturnCode SetBme68xConfigParallel( bsec_bme_settings_t& bsec_bme_conf );
+        ReturnCode SetBme68xConfigParallel( const bsec_bme_settings_t& bsec_bme_conf );
 };
 
 
