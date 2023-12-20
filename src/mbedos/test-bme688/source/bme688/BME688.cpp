@@ -89,14 +89,14 @@ void BME688::DoMeasurements()
 
 BME688::ReturnCode BME688::InitialiseSensor()
 {
-    bsec_conf.sensor_structure.intf_ptr =  this;  
-    bsec_conf.sensor_structure.intf     =  BME68X_I2C_INTF;
-    bsec_conf.sensor_structure.read     =  ReadRegister;
-    bsec_conf.sensor_structure.write    =  WriteRegister;
-    bsec_conf.sensor_structure.delay_us =  delay;
-    bsec_conf.sensor_structure.amb_temp =  25; // used in arduino example
+    bme688.dev.intf_ptr =  this;  
+    bme688.dev.intf     =  BME68X_I2C_INTF;
+    bme688.dev.read     =  ReadRegister;
+    bme688.dev.write    =  WriteRegister;
+    bme688.dev.delay_us =  delay;
+    bme688.dev.amb_temp =  25; // used in arduino example
     
-    if( bme68x_init(&bsec_conf.sensor_structure) != 0 )
+    if( bme68x_init(&bme688.dev) != 0 )
     {
         return BME688::ReturnCode::kSensorStructureFail;
     }
@@ -105,14 +105,14 @@ BME688::ReturnCode BME688::InitialiseSensor()
 
 BME688::ReturnCode BME688::InitialiseSensorFilterSettings()
 {
-    bme68x_get_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure);
-    bsec_conf.sensor_config.filter = BME68X_FILTER_OFF;
-    bsec_conf.sensor_config.odr = BME68X_ODR_NONE;
-    bsec_conf.sensor_config.os_hum = BME68X_OS_16X;
-    bsec_conf.sensor_config.os_pres = BME68X_OS_1X;
-    bsec_conf.sensor_config.os_temp = BME68X_OS_2X;
+    bme68x_get_conf(&bme688.conf, &bme688.dev);
+    bme688.conf.filter = BME68X_FILTER_OFF;
+    bme688.conf.odr = BME68X_ODR_NONE;
+    bme688.conf.os_hum = BME68X_OS_16X;
+    bme688.conf.os_pres = BME68X_OS_1X;
+    bme688.conf.os_temp = BME68X_OS_2X;
 
-    if( bme68x_set_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure) != 0 )
+    if( bme68x_set_conf(&bme688.conf, &bme688.dev) != 0 )
     {
         return BME688::ReturnCode::kSensorConfigFail;
     }
@@ -126,7 +126,7 @@ BME688::ReturnCode BME688::InitialiseSensorHeaterSettings()
     bsec_conf.sensor_heater_config.heatr_dur_prof = bsec_conf.dur_profile;
     bsec_conf.sensor_heater_config.profile_len = 1;
     
-    if( bme68x_set_heatr_conf(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_heater_config, &bsec_conf.sensor_structure) != 0 )
+    if( bme68x_set_heatr_conf(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_heater_config, &bme688.dev) != 0 )
     {
         return BME688::ReturnCode::kSensorHeaterFail;
     }
@@ -136,7 +136,7 @@ BME688::ReturnCode BME688::InitialiseSensorHeaterSettings()
 
 BME688::ReturnCode BME688::SetSequentialMode()
 {    
-    if( bme68x_set_op_mode(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_structure) != 0 )
+    if( bme68x_set_op_mode(BME68X_SEQUENTIAL_MODE, &bme688.dev) != 0 )
     {
         return BME688::ReturnCode::kSensorOperationSeqFail;
     }
@@ -177,9 +177,9 @@ BME688::ReturnCode BME688::UpdateSubscription()
 
 BME688::ReturnCode BME688::ProcessData()
 {
-    uint32_t delayInUs = bme68x_get_meas_dur(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_config, &bsec_conf.sensor_structure) + (bsec_conf.sensor_heater_config.heatr_dur_prof[0] * 1000);
+    uint32_t delayInUs = bme68x_get_meas_dur(BME68X_SEQUENTIAL_MODE, &bme688.conf, &bme688.dev) + (bsec_conf.sensor_heater_config.heatr_dur_prof[0] * 1000);
     delay(delayInUs,NULL);
-    if( bme68x_get_data(BME68X_SEQUENTIAL_MODE, bsec_conf.sensor_data, &bsec_conf.data_fields, &bsec_conf.sensor_structure) != 0 )
+    if( bme68x_get_data(BME68X_SEQUENTIAL_MODE, bsec_conf.sensor_data, &bsec_conf.data_fields, &bme688.dev) != 0 )
     {
         return BME688::ReturnCode::kSensorGetDataFail;
     }
@@ -319,7 +319,7 @@ BME688::ReturnCode BME688::SetBme68xConfigForced( const bsec_bme_settings_t &bse
         return status;
     }
 
-    this->bsec_conf.op_mode = BME68X_FORCED_MODE;
+    this->last_op_mode = BME68X_FORCED_MODE;
     return status;
 }
 
@@ -362,7 +362,7 @@ BME688::ReturnCode BME688::SetBme68xConfigParallel( const bsec_bme_settings_t& b
         return status;
     }
 
-    this->bsec_conf.op_mode = BME68X_PARALLEL_MODE;
+    this->last_op_mode = BME68X_PARALLEL_MODE;
     return status;
 }
 
@@ -373,13 +373,12 @@ BME688::ReturnCode BME688::SetTphOverSampling( const uint8_t os_temp,
                                                const uint8_t os_pres, 
                                                const uint8_t os_hum )
 {
-    if( bme68x_get_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure) == BME68X_OK )
+    if( bme68x_get_conf(&bme688.conf, &bme688.dev) == BME68X_OK )
     {
-        
-        bsec_conf.sensor_config.os_hum = os_hum;
-        bsec_conf.sensor_config.os_pres = os_pres;
-        bsec_conf.sensor_config.os_temp = os_temp;
-        if( bme68x_set_conf(&bsec_conf.sensor_config, &bsec_conf.sensor_structure) == BME68X_OK )
+        bme688.conf.os_hum = os_hum;
+        bme688.conf.os_pres = os_pres;
+        bme688.conf.os_temp = os_temp;
+        if( bme68x_set_conf(&bme688.conf, &bme688.dev) == BME68X_OK )
         {
             return ReturnCode::kOk;
         }
@@ -401,7 +400,7 @@ BME688::ReturnCode BME688::SetHeaterProfile( const uint16_t temp,
         .heatr_dur = dur
     };
 
-    if( bme68x_set_heatr_conf(BME68X_FORCED_MODE, &heater_conf, &bsec_conf.sensor_structure) == BME68X_OK )
+    if( bme68x_set_heatr_conf(BME68X_FORCED_MODE, &heater_conf, &bme688.dev) == BME68X_OK )
     {
         return ReturnCode::kOk;
     }
@@ -426,7 +425,7 @@ BME688::ReturnCode BME688::SetHeaterProfile( uint16_t* const temp,
         .shared_heatr_dur = shared_heater_dur
     };
 
-	if( bme68x_set_heatr_conf( BME68X_PARALLEL_MODE, &heater_conf, &bsec_conf.sensor_structure) == BME68X_OK )
+	if( bme68x_set_heatr_conf( BME68X_PARALLEL_MODE, &heater_conf, &bme688.dev) == BME68X_OK )
     {
         return ReturnCode::kOk;
     }
@@ -440,11 +439,11 @@ BME688::ReturnCode BME688::SetHeaterProfile( uint16_t* const temp,
  */
 BME688::ReturnCode BME688::SetOperationMode(const uint8_t op_mode)
 {
-    int8_t status = bme68x_set_op_mode(op_mode, &bsec_conf.sensor_structure);
-	if( (status == BME68X_OK) && 
-        (op_mode != BME68X_SLEEP_MODE) )
+    int8_t status = bme68x_set_op_mode(op_mode, &bme688.dev);
+	if( status == BME68X_OK && 
+        op_mode != BME68X_SLEEP_MODE )
     {
-		this->bsec_conf.last_op_mode = op_mode;
+		this->last_op_mode = op_mode;
     }
 
     if( status == BME68X_OK )
@@ -462,10 +461,10 @@ uint32_t BME688::GetMeasurementDuration(const uint8_t op_mode)
     uint8_t target_op_mode = op_mode;
 	if (target_op_mode == BME68X_SLEEP_MODE)
     {
-		target_op_mode = this->bsec_conf.last_op_mode;
+		target_op_mode = this->last_op_mode;
     }
 
-	return bme68x_get_meas_dur(target_op_mode, &bsec_conf.sensor_config, &bsec_conf.sensor_structure);
+	return bme68x_get_meas_dur(target_op_mode, &bme688.conf, &bme688.dev);
 }
 
 // Static function

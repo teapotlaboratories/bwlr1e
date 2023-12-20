@@ -48,14 +48,10 @@ class BME688{
         {            
             // sensor configuration
             bme68x_data                 sensor_data[3];
-            bme68x_dev                  sensor_structure;
-            bme68x_conf                 sensor_config;
-            bme68x_heatr_conf           sensor_heater_config;
-            uint8_t                     last_op_mode; 
+            bme68x_heatr_conf           sensor_heater_config; // not used in Arduino implementation
 
             // bsec libray configuration
             bsec_bme_settings_t         bme_conf;
-            uint8_t                     op_mode; // current sensor operation mode
             uint8_t                     data_fields;
             bsec_sensor_configuration_t requested_virtual_sensors[4];
             uint8_t                     number_required_sensor_settings;
@@ -66,6 +62,13 @@ class BME688{
             bool                        new_data_available;
             uint16_t                    temp_profile[2];
             uint16_t                    dur_profile[2];
+        };
+
+        struct Bme688Configuration
+        {
+            // store configuration for other bsec method to use
+            bme68x_conf conf;
+            bme68x_dev  dev;
         };
 
     public:
@@ -85,8 +88,10 @@ class BME688{
 
     private:    
         // bsec internal variables
-        BME688::BsecConfiguration bsec_conf;
-        SensorData                sensor_data;
+        BME688::BsecConfiguration   bsec_conf;
+        BME688::Bme688Configuration bme688;
+        SensorData                  sensor_data;
+        uint8_t                     last_op_mode; 
 
         // BME688 sensor specific method
         ReturnCode InitialiseSensor();
