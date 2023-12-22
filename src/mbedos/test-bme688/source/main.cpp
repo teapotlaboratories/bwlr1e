@@ -1,6 +1,8 @@
 #include "mbed.h"
 #include "bme688/BME688.h"
 
+#define ARRAY_LEN(array)				(sizeof(array)/sizeof(array[0]))
+
 #define FEATHER_RAK3172
 // #define BWLR1E
 
@@ -30,7 +32,18 @@ int main()
 
     // initialise bmr688
     BME688 iaq_sensor( I2C_SDA, I2C_SCL, 0x77 );
-    BME688::ReturnCode result = iaq_sensor.Initialise();
+
+    /* Desired subscription list of BSEC2 outputs */
+    bsec_virtual_sensor_t sensor_list[] = {
+            BSEC_OUTPUT_IAQ,
+            BSEC_OUTPUT_RAW_TEMPERATURE,
+            BSEC_OUTPUT_RAW_PRESSURE,
+            BSEC_OUTPUT_RAW_HUMIDITY,
+            BSEC_OUTPUT_RAW_GAS,
+            BSEC_OUTPUT_STABILIZATION_STATUS,
+            BSEC_OUTPUT_RUN_IN_STATUS
+    };
+    BME688::ReturnCode result = iaq_sensor.Initialise( sensor_list, ARRAY_LEN(sensor_list), BSEC_SAMPLE_RATE_LP );
     if( result != BME688::ReturnCode::kOk )
     {
         while( true )
@@ -48,16 +61,16 @@ int main()
     {
         ThisThread::sleep_for(15s);        
         printf("checking if data is available\n\r");
-        if(iaq_sensor.IsNewDataAvailable())
-        {
-            // toggle pin if new data found
-            led0 = !led0;
-            printf("data available!\n\r"); 
+        // if(iaq_sensor.IsNewDataAvailable())
+        // {
+        //     // toggle pin if new data found
+        //     led0 = !led0;
+        //     printf("data available!\n\r"); 
             
-            // enable platform.stdio-buffered-serial in mbed_app.json 
-            // to see the dumped data
-            iaq_sensor.DumpData();
-        }
+        //     // enable platform.stdio-buffered-serial in mbed_app.json 
+        //     // to see the dumped data
+        //     // iaq_sensor.DumpData();
+        // }
     }
     measure_thread.join();
 }
@@ -66,7 +79,7 @@ int main()
 void measure(BME688* bme688)
 {
     while ( true ) {
-        bme688->DoMeasurements();
+        // bme688->DoMeasurements();
         ThisThread::sleep_for(500ms);
     }
 }

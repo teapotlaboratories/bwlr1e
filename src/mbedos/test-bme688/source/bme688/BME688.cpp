@@ -6,27 +6,31 @@ static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t l
 static void delay(uint32_t period, void *intf_ptr);
 
 BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr )
-{
-    this->new_data_available = 0;
-    
+{    
     this->i2c_sda = i2c_sda;
     this->i2c_scl = i2c_scl;
     this->bme688_addr = bme688_addr;
     this->bme688_addr_8bit = ( bme688_addr << 1 );
 
-    this->bsec_conf.requested_virtual_sensors_number = BSEC_REQUESTED_VIRTUAL_SENSORS_NUMBER;
-    this->bsec_conf.temperature_offset = BSEC_TEMPERATURE_OFFSET;
-    
-    this->bsec_conf.temp_profile[0] = 320;
-    this->bsec_conf.temp_profile[1] = 320;
-    this->bsec_conf.dur_profile[0] = 150;
-    this->bsec_conf.dur_profile[1] = 150;   
+    this->bsec.temperature_offset = 0.0f;
+    this->callback = nullptr;
 }
 
-BME688::ReturnCode BME688::Initialise()
+BME688::ReturnCode BME688::SetTemperatureOffset( const float temp_offset )
+{
+    this->bsec.temperature_offset = temp_offset;
+    return ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::Initialise( bsec_virtual_sensor_t sensor_list[], uint8_t n_sensors, float sample_rate )
 {
     BME688::ReturnCode result;
 
+    // copy virtual sensor list and sample rate
+    this->bsec.sample_rate = sample_rate;
+    this->bsec.n_sensors = n_sensors;
+    memcpy(this->bsec.sensor_list, sensor_list, n_sensors);
+    
     // enable I2C
     I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
     this->i2c_local = &i2c_temp;    // set i2c object for bsec to use
@@ -39,33 +43,15 @@ BME688::ReturnCode BME688::Initialise()
         return result;
     }
 
-    // this is not mentiond in the doc
-    result = this->InitialiseSensorFilterSettings();
-    if( result != ReturnCode::kOk )
-    {
-        return result;
-    }
-
-    result = this->InitialiseSensorHeaterSettings();
-    if( result != ReturnCode::kOk )
-    {
-        return result;
-    }
-    
-    result = this->SetSequentialMode();
-    if( result != ReturnCode::kOk )
-    {
-        return result;
-    }
-    // this is not mentiond in the doc
-
     result = this->InitialiseBsec();
     if( result != ReturnCode::kOk )
     {
         return result;
     }
 
-    result = this->UpdateSubscription();
+    result = this->UpdateSubscription( this->bsec.sensor_list,
+                                       this->bsec.n_sensors,
+                                       this->bsec.sample_rate );
     if( result != ReturnCode::kOk )
     {
         return result;
@@ -74,213 +60,56 @@ BME688::ReturnCode BME688::Initialise()
     return ReturnCode::kOk;
 }
 
-
-void BME688::DoMeasurements()
-{
-    // enable I2C
-    I2C i2c_temp( i2c_sda, i2c_scl );
-    this->i2c_local = &i2c_temp;    // set i2c object for bsec to use
-    Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer setting i2c_local to nullptr at Initialise() return
-
-    this->ProcessData();
-    this->BsecProcessing();
-}
-
-
 BME688::ReturnCode BME688::InitialiseSensor()
 {
-    bme688.dev.intf_ptr =  this;  
-    bme688.dev.intf     =  BME68X_I2C_INTF;
-    bme688.dev.read     =  ReadRegister;
-    bme688.dev.write    =  WriteRegister;
-    bme688.dev.delay_us =  delay;
-    bme688.dev.amb_temp =  25; // used in arduino example
+    sensor.dev.intf_ptr =  this;  
+    sensor.dev.intf     =  BME68X_I2C_INTF;
+    sensor.dev.read     =  ReadRegister;
+    sensor.dev.write    =  WriteRegister;
+    sensor.dev.delay_us =  delay;
+    sensor.dev.amb_temp =  25; // used in arduino example
     
-    if( bme68x_init(&bme688.dev) != 0 )
+    this->sensor.status = bme68x_init(&sensor.dev);
+    if( this->sensor.status != BME68X_OK )
     {
-        return BME688::ReturnCode::kSensorStructureFail;
-    }
-    return BME688::ReturnCode::kOk;
-}
-
-BME688::ReturnCode BME688::InitialiseSensorFilterSettings()
-{
-    bme68x_get_conf(&bme688.conf, &bme688.dev);
-    bme688.conf.filter = BME68X_FILTER_OFF;
-    bme688.conf.odr = BME68X_ODR_NONE;
-    bme688.conf.os_hum = BME68X_OS_16X;
-    bme688.conf.os_pres = BME68X_OS_1X;
-    bme688.conf.os_temp = BME68X_OS_2X;
-
-    if( bme68x_set_conf(&bme688.conf, &bme688.dev) != 0 )
-    {
-        return BME688::ReturnCode::kSensorConfigFail;
-    }
-    return BME688::ReturnCode::kOk;
-}
-
-BME688::ReturnCode BME688::InitialiseSensorHeaterSettings()
-{
-    bsec_conf.sensor_heater_config.enable = BME68X_ENABLE;
-    bsec_conf.sensor_heater_config.heatr_temp_prof = bsec_conf.temp_profile;
-    bsec_conf.sensor_heater_config.heatr_dur_prof = bsec_conf.dur_profile;
-    bsec_conf.sensor_heater_config.profile_len = 1;
-    
-    if( bme68x_set_heatr_conf(BME68X_SEQUENTIAL_MODE, &bsec_conf.sensor_heater_config, &bme688.dev) != 0 )
-    {
-        return BME688::ReturnCode::kSensorHeaterFail;
-    }
-    return BME688::ReturnCode::kOk;
-}
-
-
-BME688::ReturnCode BME688::SetSequentialMode()
-{    
-    if( bme68x_set_op_mode(BME68X_SEQUENTIAL_MODE, &bme688.dev) != 0 )
-    {
-        return BME688::ReturnCode::kSensorOperationSeqFail;
+        return BME688::ReturnCode::kSensorInitFail;
     }
     return BME688::ReturnCode::kOk;
 }
 
 BME688::ReturnCode BME688::InitialiseBsec()
 {
-    if( bsec_init() != 0 )
+    this->bsec.status = bsec_init();
+    if( this->bsec.status != BSEC_OK )
     {
-        return BME688::ReturnCode::kSensorBsecFail;
+        return BME688::ReturnCode::kBsecInitFail;
     }
     return BME688::ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::UpdateSubscription()
+BME688::ReturnCode BME688::UpdateSubscription(bsec_virtual_sensor_t sensor_list[], uint8_t n_sensors, float sample_rate)
 {
-    bsec_conf.requested_virtual_sensors[0].sensor_id = BSEC_OUTPUT_IAQ;
-    bsec_conf.requested_virtual_sensors[0].sample_rate = BSEC_SAMPLE_RATE_LP;
-    bsec_conf.requested_virtual_sensors[1].sensor_id = BSEC_OUTPUT_CO2_EQUIVALENT;
-    bsec_conf.requested_virtual_sensors[1].sample_rate = BSEC_SAMPLE_RATE_LP;
-    bsec_conf.requested_virtual_sensors[2].sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE;
-    bsec_conf.requested_virtual_sensors[2].sample_rate = BSEC_SAMPLE_RATE_LP;
-    bsec_conf.requested_virtual_sensors[3].sensor_id = BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY;
-    bsec_conf.requested_virtual_sensors[3].sample_rate = BSEC_SAMPLE_RATE_LP;
-    bsec_sensor_configuration_t requiredSensorSettings[BSEC_MAX_PHYSICAL_SENSOR];
-    bsec_conf.number_required_sensor_settings = BSEC_MAX_PHYSICAL_SENSOR;
+    bsec_sensor_configuration_t virtual_sensors[BSEC_NUMBER_OUTPUTS];
+    bsec_sensor_configuration_t sensor_settings[BSEC_MAX_PHYSICAL_SENSOR];
+    uint8_t                     n_sensor_settings = BSEC_MAX_PHYSICAL_SENSOR;
 
-    if( bsec_update_subscription( bsec_conf.requested_virtual_sensors, 
-                                  bsec_conf.requested_virtual_sensors_number,
-                                  requiredSensorSettings, 
-                                  &bsec_conf.number_required_sensor_settings ) != 0 )
+    for (uint8_t i = 0; i < n_sensors; i++)
     {
-        return BME688::ReturnCode::kSensorBsecSubscriptionFail;
+        virtual_sensors[i].sensor_id = sensor_list[i];
+        virtual_sensors[i].sample_rate = sample_rate;
     }
-    return BME688::ReturnCode::kOk;
-}
 
-BME688::ReturnCode BME688::ProcessData()
-{
-    uint32_t delayInUs = bme68x_get_meas_dur(BME68X_SEQUENTIAL_MODE, &bme688.conf, &bme688.dev) + (bsec_conf.sensor_heater_config.heatr_dur_prof[0] * 1000);
-    delay(delayInUs,NULL);
-    if( bme68x_get_data(BME68X_SEQUENTIAL_MODE, bsec_conf.sensor_data, &bsec_conf.data_fields, &bme688.dev) != 0 )
+    /* Subscribe to library virtual sensors outputs */
+    this->bsec.status = bsec_update_subscription( virtual_sensors, 
+                                                  n_sensors, 
+                                                  sensor_settings, 
+                                                  &n_sensor_settings); // TODO: need to check if all sensor allocated in n_sensor_settings
+    if (this->bsec.status != BSEC_OK)
     {
-        return BME688::ReturnCode::kSensorGetDataFail;
+        return ReturnCode::kSensorBsecSubscriptionFail;
     }
-    return BME688::ReturnCode::kOk;
-}
 
-
-void BME688::BsecProcessing()
-{
-    if (!(bsec_conf.sensor_data[bsec_conf.data_fields - 1].status & BME68X_NEW_DATA_MSK))
-        return;
-    bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR];
-    uint8_t nInputs = 0;;
-    bsec_conf.current_time_ns = Kernel::get_ms_count() * INT64_C(1000000);
-    inputs[nInputs].sensor_id = BSEC_INPUT_TEMPERATURE;
-    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].temperature;
-    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
-    nInputs++;
-
-    inputs[nInputs].sensor_id = BSEC_INPUT_HUMIDITY;
-    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].humidity;
-    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
-    nInputs++;
-
-    inputs[nInputs].sensor_id = BSEC_INPUT_PRESSURE;
-    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].pressure;
-    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
-    nInputs++;
-
-    inputs[nInputs].sensor_id = BSEC_INPUT_GASRESISTOR;
-    inputs[nInputs].signal = bsec_conf.sensor_data[bsec_conf.data_fields - 1].gas_resistance;
-    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
-    nInputs++;
-
-    inputs[nInputs].sensor_id = BSEC_INPUT_HEATSOURCE;
-    inputs[nInputs].signal = bsec_conf.temperature_offset;
-    inputs[nInputs].time_stamp = bsec_conf.current_time_ns;
-
-    
-    uint8_t nOutputs = 0;
-    nOutputs = BSEC_NUMBER_OUTPUTS;
-
-    
-    bsec_output_t outputStorage[BSEC_NUMBER_OUTPUTS];
-
-    auto status = bsec_do_steps(inputs, nInputs, outputStorage, &nOutputs);
-    if (status != BSEC_OK)
-    {
-        return;
-    }
-    if (nOutputs > 0)
-    {
-        new_data_available = true;
-        for (uint8_t i = 0; i < nOutputs; i++)
-        {
-            switch (outputStorage[i].sensor_id)
-            {
-            case BSEC_OUTPUT_IAQ:
-                sensor_data.iaq = outputStorage[i].signal;
-                sensor_data.iaq_accuracy = outputStorage[i].accuracy;
-                break;
-            case BSEC_OUTPUT_CO2_EQUIVALENT:
-                sensor_data.co2 = outputStorage[i].signal;
-                sensor_data.co2_accuracy = outputStorage[i].accuracy;
-                break;
-            case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-                sensor_data.temperature = outputStorage[i].signal;
-                break;
-            case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-                sensor_data.humidity = outputStorage[i].signal;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-    else
-    {
-        new_data_available = false;
-    }
-}
-
-void BME688::DumpData()
-{
-    printf("Temperature:%2.1f *C\n\r",sensor_data.temperature);
-    printf("Humidity:%2.1f\n\r",sensor_data.humidity);
-    printf("CO2:%2.1f\n\r",sensor_data.co2);
-    printf("CO2 Accuracy:%d\n\r",sensor_data.co2_accuracy);
-    printf("IAQ:%2.1f\n\r",sensor_data.iaq);
-    printf("IAQ Accuracy:%d",sensor_data.iaq_accuracy);
-}
-
-bool BME688::IsNewDataAvailable()
-{
-    return new_data_available;    
-}
-
-
-BME688::SensorData BME688::GetLatest()
-{
-    return sensor_data;
+    return ReturnCode::kOk;
 }
 
 /**
@@ -291,35 +120,35 @@ BME688::SensorData BME688::GetLatest()
 /**
  * @brief Set the BME68X sensor configuration to forced mode
  */
-BME688::ReturnCode BME688::SetBme68xConfigForced( const bsec_bme_settings_t &bsec_bme_conf )
+BME688::ReturnCode BME688::SetSensorToForcedMode( const bsec_bme_settings_t &conf )
 {
     ReturnCode status = ReturnCode::kError;
     
     // Set the filter, odr, temperature, pressure and humidity settings */
-    status = SetTphOverSampling( bsec_bme_conf.temperature_oversampling, 
-                                 bsec_bme_conf.pressure_oversampling, 
-                                 bsec_bme_conf.humidity_oversampling );
+    status = SetSensorTphOverSampling( conf.temperature_oversampling, 
+                                       conf.pressure_oversampling, 
+                                       conf.humidity_oversampling );
     if( status != ReturnCode::kOk )
     {
         return status;
     }
 
     // set heater profile
-    status = SetHeaterProfile( bsec_bme_conf.heater_temperature, 
-                               bsec_bme_conf.heater_duration );
+    status = SetSensorHeaterProfile( conf.heater_temperature, 
+                                     conf.heater_duration );
     if( status != ReturnCode::kOk )
     {
         return status;
     }
 
     // set operation mode
-    status = SetOperationMode( BME68X_FORCED_MODE );
+    status = SetSensorOperationMode( BME68X_FORCED_MODE );
     if( status != ReturnCode::kOk )
     {
         return status;
     }
 
-    this->last_op_mode = BME68X_FORCED_MODE;
+    this->sensor.last_op_mode = BME68X_FORCED_MODE;
     return status;
 }
 
@@ -327,58 +156,61 @@ BME688::ReturnCode BME688::SetBme68xConfigForced( const bsec_bme_settings_t &bse
 /**
  * @brief Set the BME68X sensor configuration to parallel mode
  */
-BME688::ReturnCode BME688::SetBme68xConfigParallel( const bsec_bme_settings_t& bsec_bme_conf )
+BME688::ReturnCode BME688::SetSensorToParallelMode( const bsec_bme_settings_t& conf )
 {
     uint16_t shared_heater_dur = 0;
 
     ReturnCode status = ReturnCode::kError;
     
     // Set the filter, odr, temperature, pressure and humidity settings */
-    status = SetTphOverSampling( bsec_bme_conf.temperature_oversampling, 
-                                 bsec_bme_conf.pressure_oversampling, 
-                                 bsec_bme_conf.humidity_oversampling );
+    status = SetSensorTphOverSampling( conf.temperature_oversampling, 
+                                       conf.pressure_oversampling, 
+                                       conf.humidity_oversampling );
     if( status != ReturnCode::kOk )
     {
         return status;
     }
 
     // calculate heater duration
-    shared_heater_dur = BSEC_TOTAL_HEAT_DUR - (GetMeasurementDuration(BME68X_PARALLEL_MODE) / INT64_C(1000));
+    shared_heater_dur = BSEC_TOTAL_HEAT_DUR - (GetSensorMeasurementDuration(BME68X_PARALLEL_MODE) / INT64_C(1000));
 
     // set heater profile
-    status = SetHeaterProfile( (uint16_t*) bsec_bme_conf.heater_temperature_profile, 
-                               (uint16_t*) bsec_bme_conf.heater_duration_profile,
-                               shared_heater_dur,
-                               bsec_bme_conf.heater_profile_len );
+    status = SetSensorHeaterProfile( (uint16_t*) conf.heater_temperature_profile, 
+                                     (uint16_t*) conf.heater_duration_profile,
+                                     shared_heater_dur,
+                                     conf.heater_profile_len );
     if( status != ReturnCode::kOk )
     {
         return status;
     }
 
     // set bme688 operation mode
-    status = SetOperationMode( BME68X_PARALLEL_MODE );
+    status = SetSensorOperationMode( BME68X_PARALLEL_MODE );
     if( status != ReturnCode::kOk )
     {
         return status;
     }
 
-    this->last_op_mode = BME68X_PARALLEL_MODE;
+    this->sensor.last_op_mode = BME68X_PARALLEL_MODE;
     return status;
 }
 
 /**
  * @brief Function to set the Temperature, Pressure and Humidity over-sampling
  */
-BME688::ReturnCode BME688::SetTphOverSampling( const uint8_t os_temp, 
+BME688::ReturnCode BME688::SetSensorTphOverSampling( const uint8_t os_temp, 
                                                const uint8_t os_pres, 
                                                const uint8_t os_hum )
 {
-    if( bme68x_get_conf(&bme688.conf, &bme688.dev) == BME68X_OK )
+    this->sensor.status = bme68x_get_conf(&sensor.conf, &sensor.dev);
+    if( this->sensor.status == BME68X_OK )
     {
-        bme688.conf.os_hum = os_hum;
-        bme688.conf.os_pres = os_pres;
-        bme688.conf.os_temp = os_temp;
-        if( bme68x_set_conf(&bme688.conf, &bme688.dev) == BME68X_OK )
+        sensor.conf.os_hum = os_hum;
+        sensor.conf.os_pres = os_pres;
+        sensor.conf.os_temp = os_temp;
+
+        this->sensor.status = bme68x_set_conf(&sensor.conf, &sensor.dev);
+        if( this->sensor.status == BME68X_OK )
         {
             return ReturnCode::kOk;
         }
@@ -390,7 +222,7 @@ BME688::ReturnCode BME688::SetTphOverSampling( const uint8_t os_temp,
 /**
  * @brief Function to set the heater profile for Forced mode
  */
-BME688::ReturnCode BME688::SetHeaterProfile( const uint16_t temp, 
+BME688::ReturnCode BME688::SetSensorHeaterProfile( const uint16_t temp, 
                                              const uint16_t dur )
 {
     bme68x_heatr_conf heater_conf
@@ -400,7 +232,8 @@ BME688::ReturnCode BME688::SetHeaterProfile( const uint16_t temp,
         .heatr_dur = dur
     };
 
-    if( bme68x_set_heatr_conf(BME68X_FORCED_MODE, &heater_conf, &bme688.dev) == BME68X_OK )
+    this->sensor.status = bme68x_set_heatr_conf(BME68X_FORCED_MODE, &heater_conf, &sensor.dev);
+    if( this->sensor.status == BME68X_OK )
     {
         return ReturnCode::kOk;
     }
@@ -411,7 +244,7 @@ BME688::ReturnCode BME688::SetHeaterProfile( const uint16_t temp,
 /**
  * @brief Function to set the heater profile for Parallel mode
  */
-BME688::ReturnCode BME688::SetHeaterProfile( uint16_t* const temp, 
+BME688::ReturnCode BME688::SetSensorHeaterProfile( uint16_t* const temp, 
                                              uint16_t* const mul, 
                                              const uint16_t shared_heater_dur, 
                                              const uint8_t profile_len )
@@ -425,7 +258,8 @@ BME688::ReturnCode BME688::SetHeaterProfile( uint16_t* const temp,
         .shared_heatr_dur = shared_heater_dur
     };
 
-	if( bme68x_set_heatr_conf( BME68X_PARALLEL_MODE, &heater_conf, &bme688.dev) == BME68X_OK )
+    this->sensor.status = bme68x_set_heatr_conf( BME68X_PARALLEL_MODE, &heater_conf, &sensor.dev);
+	if( this->sensor.status == BME68X_OK )
     {
         return ReturnCode::kOk;
     }
@@ -437,16 +271,16 @@ BME688::ReturnCode BME688::SetHeaterProfile( uint16_t* const temp,
 /**
  * @brief Function to set the operation mode
  */
-BME688::ReturnCode BME688::SetOperationMode(const uint8_t op_mode)
+BME688::ReturnCode BME688::SetSensorOperationMode(const uint8_t op_mode)
 {
-    int8_t status = bme68x_set_op_mode(op_mode, &bme688.dev);
-	if( status == BME68X_OK && 
-        op_mode != BME68X_SLEEP_MODE )
+    this->sensor.status = bme68x_set_op_mode(op_mode, &sensor.dev);
+	if( this->sensor.status == BME68X_OK && 
+                    op_mode != BME68X_SLEEP_MODE )
     {
-		this->last_op_mode = op_mode;
+		this->sensor.last_op_mode = op_mode;
     }
 
-    if( status == BME68X_OK )
+    if( this->sensor.status == BME68X_OK )
     {
         return ReturnCode::kOk;
     }
@@ -456,15 +290,230 @@ BME688::ReturnCode BME688::SetOperationMode(const uint8_t op_mode)
 /**
  * @brief Function to get the measurement duration in microseconds
  */
-uint32_t BME688::GetMeasurementDuration(const uint8_t op_mode)
+uint32_t BME688::GetSensorMeasurementDuration(const uint8_t op_mode)
 {
     uint8_t target_op_mode = op_mode;
 	if (target_op_mode == BME68X_SLEEP_MODE)
     {
-		target_op_mode = this->last_op_mode;
+		target_op_mode = this->sensor.last_op_mode;
     }
 
-	return bme68x_get_meas_dur(target_op_mode, &bme688.conf, &bme688.dev);
+	return bme68x_get_meas_dur(target_op_mode, &sensor.conf, &sensor.dev);
+}
+
+/**
+ * @brief Function to fetch data from the sensor into the local buffer
+ */
+BME688::ReturnCode BME688::FetchSensorData( Bme688FetchedData &data_out )
+{
+	data_out.n_fields = 0;
+	data_out.i_fields = 0;
+	this->sensor.status = bme68x_get_data( this->sensor.last_op_mode,
+                                           data_out.data, 
+                                           &(data_out.n_fields), 
+                                           &(this->sensor.dev) );
+
+    if ( this->sensor.status != BME68X_OK )
+    {
+        return ReturnCode::kSensorGetDataFail;
+    }
+
+    return ReturnCode::kOk;
+}
+
+/**
+ * @brief Function to get a single data field
+ */
+uint8_t BME688::GetSensorData( Bme688FetchedData &data_in,
+                               bme68x_data &data_out )
+{
+	if (this->sensor.last_op_mode == BME68X_FORCED_MODE)
+	{
+		data_out = data_in.data[0];
+	} 
+    else
+	{
+		if( data_in.n_fields )
+		{
+			/* iFields spans from 0-2 while nFields spans from
+			 * 0-3, where 0 means that there is no new data
+			 */
+			data_out = data_in.data[data_in.i_fields];
+			data_in.i_fields++;
+
+			/* Limit reading continuously to the last fields read */
+			if ( data_in.i_fields >= data_in.n_fields )
+			{
+				data_in.i_fields = data_in.n_fields - 1;
+            	return 0;
+			}
+
+			/* Indicate if there is something left to read */
+        	return (data_in.n_fields) - (data_in.i_fields);
+		}
+	}
+
+    return 0;
+}
+
+/**
+ * @brief Reads data from the BME68X sensor and process it
+ */
+BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_data &data)
+{
+    bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR]; /* Temp, Pres, Hum & Gas */
+    uint8_t n_inputs = 0;
+    /* Checks all the required sensor inputs, required for the BSEC library for the requested outputs */
+    if (BSEC_CHECK_INPUT(this->bsec.sensor_conf.process_data, BSEC_INPUT_HEATSOURCE))
+    {
+        inputs[n_inputs].sensor_id = BSEC_INPUT_HEATSOURCE;
+        inputs[n_inputs].signal = this->bsec.temperature_offset;
+        inputs[n_inputs].time_stamp = curr_time_ns;
+        n_inputs++;
+    }
+    if (BSEC_CHECK_INPUT(this->bsec.sensor_conf.process_data, BSEC_INPUT_TEMPERATURE))
+    {
+#ifdef BME68X_USE_FPU
+        inputs[n_inputs].signal = data.temperature;
+#else
+        inputs[n_inputs].signal = data.temperature / 100.0f;
+#endif
+        inputs[n_inputs].sensor_id = BSEC_INPUT_TEMPERATURE;
+        inputs[n_inputs].time_stamp = curr_time_ns;
+        n_inputs++;
+    }
+    if (BSEC_CHECK_INPUT(this->bsec.sensor_conf.process_data, BSEC_INPUT_HUMIDITY))
+    {
+#ifdef BME68X_USE_FPU
+        inputs[n_inputs].signal = data.humidity;
+#else
+        inputs[n_inputs].signal = data.humidity / 1000.0f;
+#endif
+        inputs[n_inputs].sensor_id = BSEC_INPUT_HUMIDITY;
+        inputs[n_inputs].time_stamp = curr_time_ns;
+        n_inputs++;
+    }
+    if (BSEC_CHECK_INPUT(this->bsec.sensor_conf.process_data, BSEC_INPUT_PRESSURE))
+    {
+        inputs[n_inputs].sensor_id = BSEC_INPUT_PRESSURE;
+        inputs[n_inputs].signal = data.pressure;
+        inputs[n_inputs].time_stamp = curr_time_ns;
+        n_inputs++;
+    }
+    if (BSEC_CHECK_INPUT(this->bsec.sensor_conf.process_data, BSEC_INPUT_GASRESISTOR) &&
+            (data.status & BME68X_GASM_VALID_MSK))
+    {
+        inputs[n_inputs].sensor_id = BSEC_INPUT_GASRESISTOR;
+        inputs[n_inputs].signal = data.gas_resistance;
+        inputs[n_inputs].time_stamp = curr_time_ns;
+        n_inputs++;
+    }
+    if (BSEC_CHECK_INPUT(this->bsec.sensor_conf.process_data, BSEC_INPUT_PROFILE_PART) &&
+            (data.status & BME68X_GASM_VALID_MSK))
+    {
+        inputs[n_inputs].sensor_id = BSEC_INPUT_PROFILE_PART;
+        inputs[n_inputs].signal = (this->sensor.last_op_mode == BME68X_FORCED_MODE) ? 0 : data.gas_index;
+        inputs[n_inputs].time_stamp = curr_time_ns;
+        n_inputs++;
+    }
+
+    BsecOutputs outputs;
+
+    if (n_inputs > 0)
+    {
+
+        outputs.n_outputs = BSEC_NUMBER_OUTPUTS;
+        memset(outputs.output, 0, sizeof(outputs.output));
+
+        /* Processing of the input signals and returning of output samples is performed by bsec_do_steps() */
+        this->sensor.status = bsec_do_steps( inputs, n_inputs, outputs.output, &outputs.n_outputs );
+
+        if (this->sensor.status != BSEC_OK)
+        {
+            return ReturnCode::kSensorBsecProcessFail;
+        }
+
+        // let user know that data output is ready
+        if( callback != nullptr )
+        {
+            this->callback(data, outputs);
+        }
+    }
+    return ReturnCode::kOk;
+}
+
+
+/**
+ * @brief Callback from the user to read data from the BME68X using parallel mode/forced mode, process and store outputs
+ */
+BME688::ReturnCode BME688::Run(void)
+{
+    ReturnCode ret = ReturnCode::kError;
+    // int64_t curr_time_ns = getTimeMs() * INT64_C(1000000);
+    int64_t curr_time_ns; // FIXME: need to implement
+    this->sensor.last_op_mode = this->bsec.sensor_conf.op_mode;
+
+    if (curr_time_ns >= this->bsec.sensor_conf.next_call)
+    {
+        /* Provides the information about the current sensor configuration that is
+           necessary to fulfill the input requirements, eg: operation mode, timestamp
+           at which the sensor data shall be fetched etc */
+        this->bsec.status = bsec_sensor_control( curr_time_ns, 
+                                                 &(this->bsec.sensor_conf) );
+        if (this->bsec.status != BSEC_OK)
+            return ReturnCode::kBsecRunFail;
+
+        switch ( this->bsec.sensor_conf.op_mode )
+        {
+            case BME68X_FORCED_MODE:
+                ret = SetSensorToForcedMode( this->bsec.sensor_conf );
+                break;
+            case BME68X_PARALLEL_MODE:
+                if ( this->sensor.last_op_mode != this->bsec.sensor_conf.op_mode )
+                {
+                    ret = SetSensorToParallelMode( this->bsec.sensor_conf );
+                }
+                break;
+
+            case BME68X_SLEEP_MODE:
+                if ( this->sensor.last_op_mode != this->bsec.sensor_conf.op_mode )
+                {
+                    ret = SetSensorOperationMode( BME68X_SLEEP_MODE );
+                }
+                break;
+        }
+
+        if( ret != ReturnCode::kOk )
+            return ret;
+
+        if( this->bsec.sensor_conf.trigger_measurement && 
+            this->bsec.sensor_conf.op_mode != BME68X_SLEEP_MODE )
+        {
+            Bme688FetchedData raw_data;
+            ret = FetchSensorData( raw_data );
+            if( ret == ReturnCode::kOk )
+            {
+                uint8_t n_fields_left = 0;
+                bme68x_data data;
+                do
+                {
+                    n_fields_left = GetSensorData( raw_data, data );
+                    /* check for valid gas data */
+                    if( data.status & BME68X_GASM_VALID_MSK )
+                    {
+                        ret = ProcessData(curr_time_ns, data);
+                        if( ret != ReturnCode::kOk )
+                        {
+                            return ret;
+                        }
+                    }
+                } while (n_fields_left);
+            }
+
+        }
+
+    }
+    return ReturnCode::kOk;
 }
 
 // Static function
