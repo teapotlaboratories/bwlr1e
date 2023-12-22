@@ -9,7 +9,7 @@
 
             "target.c_lib": "std",
             "target.printf_lib": "std",
-            "platform.stdio-buffered-serial": 0,
+            "platform.stdio-buffered-serial": 1,
             "platform.stdio-convert-newlines": true,
             "platform.stdio-baud-rate": 115200,
             "platform.default-serial-baud-rate": 115200,

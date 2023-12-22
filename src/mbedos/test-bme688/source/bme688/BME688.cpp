@@ -1,9 +1,11 @@
 #include "BME688.h"
 #include "Defer.h"
 
+using namespace std::chrono;
+
 static int8_t ReadRegister(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
 static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
-static void delay(uint32_t period, void *intf_ptr);
+static void delay_us(uint32_t time_us, void *intf_ptr);
 
 BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr )
 {    
@@ -66,7 +68,7 @@ BME688::ReturnCode BME688::InitialiseSensor()
     sensor.dev.intf     =  BME68X_I2C_INTF;
     sensor.dev.read     =  ReadRegister;
     sensor.dev.write    =  WriteRegister;
-    sensor.dev.delay_us =  delay;
+    sensor.dev.delay_us =  delay_us;
     sensor.dev.amb_temp =  25; // used in arduino example
     
     this->sensor.status = bme68x_init(&sensor.dev);
@@ -449,8 +451,9 @@ BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_
 BME688::ReturnCode BME688::Run(void)
 {
     ReturnCode ret = ReturnCode::kError;
-    // int64_t curr_time_ns = getTimeMs() * INT64_C(1000000);
-    int64_t curr_time_ns; // FIXME: need to implement
+
+    // TODO: verify needed. Implementation might be wrong.
+    int64_t curr_time_ns = std::chrono::time_point_cast<std::chrono::nanoseconds>(Kernel::Clock::now()).time_since_epoch().count();
     this->sensor.last_op_mode = this->bsec.sensor_conf.op_mode;
 
     if (curr_time_ns >= this->bsec.sensor_conf.next_call)
@@ -574,10 +577,11 @@ static int8_t WriteRegister(uint8_t reg_addr, const uint8_t *reg_data, uint32_t 
     return rslt;
 }
 
-
-static void delay(uint32_t period, void *intf_ptr)
+static void delay_us(uint32_t time_us, void *intf_ptr)
 {
-    wait_us ( period );
+    // use wait_us to wait without sleep
+    // if system goes to sleep, I2C comm need to be re-init
+    wait_us ( time_us );
 }
 
 
