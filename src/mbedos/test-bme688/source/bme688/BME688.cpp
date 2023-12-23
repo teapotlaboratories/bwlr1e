@@ -1,13 +1,24 @@
 #include "BME688.h"
 #include "Defer.h"
 
+#define BSEC_CHECK_INPUT(x, shift)  (x & (1 << (shift-1)))
+
 using namespace std::chrono;
 
+// *********************************************************************
+// STATIC SENSOR CALLBACK FORWARD DECLARATION
+// *********************************************************************
 static int8_t ReadRegister(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
 static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
-static void delay_us(uint32_t time_us, void *intf_ptr);
+static void DelayUs(uint32_t time_us, void *intf_ptr);
 
-BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr )
+
+// *********************************************************************
+// PUBLIC
+// *********************************************************************
+
+BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr ):bsec({0}),
+                                                                         sensor({0})
 {    
     this->i2c_sda = i2c_sda;
     this->i2c_scl = i2c_scl;
@@ -18,39 +29,37 @@ BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr )
     this->callback = nullptr;
 }
 
-BME688::ReturnCode BME688::SetTemperatureOffset( const float temp_offset )
-{
-    this->bsec.temperature_offset = temp_offset;
-    return ReturnCode::kOk;
-}
-
 BME688::ReturnCode BME688::Initialise( bsec_virtual_sensor_t sensor_list[], uint8_t n_sensors, float sample_rate )
 {
+    /* enable I2C */
+    I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
+    this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see WriteRegister and ReadRegister
+    Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer changing i2c_local to nullptr at function return
+
     BME688::ReturnCode result;
 
-    // copy virtual sensor list and sample rate
+    /* copy virtual sensor list and sample rate */
     this->bsec.sample_rate = sample_rate;
     this->bsec.n_sensors = n_sensors;
     memcpy(this->bsec.sensor_list, sensor_list, n_sensors);
     
-    // enable I2C
-    I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
-    this->i2c_local = &i2c_temp;    // set i2c object for bsec to use
-    Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer setting i2c_local to nullptr at Initialise() return
+    // TODO: check chip ID   
 
-    // TODO: check chip ID    
+    /* initialise bme688 sensor */ 
     result = this->InitialiseSensor();
     if( result != ReturnCode::kOk )
     {
         return result;
     }
 
+    /* initialise bsec library */
     result = this->InitialiseBsec();
     if( result != ReturnCode::kOk )
     {
         return result;
     }
 
+    /* tell bsec library which virtual sensor to process */
     result = this->UpdateSubscription( this->bsec.sensor_list,
                                        this->bsec.n_sensors,
                                        this->bsec.sample_rate );
@@ -62,14 +71,125 @@ BME688::ReturnCode BME688::Initialise( bsec_virtual_sensor_t sensor_list[], uint
     return ReturnCode::kOk;
 }
 
+BME688::ReturnCode BME688::SetCallback( Callback cb )
+{
+    if( cb == nullptr )
+    {
+        return ReturnCode::kNullPointer;
+    }
+ 
+    this->callback = cb;
+    return ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::SetTemperatureOffset( const float temp_offset )
+{
+    this->bsec.temperature_offset = temp_offset;
+    return ReturnCode::kOk;
+}
+
+/**
+ * @brief Callback from the user to read data from the BME68X using parallel mode/forced mode, process and store outputs
+ */
+BME688::ReturnCode BME688::Run(void)
+{
+    /* enable I2C */
+    I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
+    this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see WriteRegister and ReadRegister
+    Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer changing i2c_local to nullptr at function return
+
+
+    ReturnCode ret = ReturnCode::kError;
+
+    int64_t curr_time_ns = std::chrono::time_point_cast<std::chrono::nanoseconds>(Kernel::Clock::now()).time_since_epoch().count();
+    this->sensor.last_op_mode = this->bsec.sensor_conf.op_mode;
+
+    if (curr_time_ns >= this->bsec.sensor_conf.next_call)   
+    {
+        /* Provides the information about the current sensor configuration that is
+           necessary to fulfill the input requirements, eg: operation mode, timestamp
+           at which the sensor data shall be fetched etc */
+        this->bsec.status = bsec_sensor_control( curr_time_ns, 
+                                                 &(this->bsec.sensor_conf) );
+        if (this->bsec.status != BSEC_OK)
+            return ReturnCode::kBsecRunFail;
+
+        switch ( this->bsec.sensor_conf.op_mode )
+        {
+            case BME68X_FORCED_MODE:
+                ret = SetSensorToForcedMode( this->bsec.sensor_conf );
+                break;
+            case BME68X_PARALLEL_MODE:
+                if ( this->sensor.last_op_mode != this->bsec.sensor_conf.op_mode )
+                {
+                    ret = SetSensorToParallelMode( this->bsec.sensor_conf );
+                }
+                break;
+
+            case BME68X_SLEEP_MODE:
+                if ( this->sensor.last_op_mode != this->bsec.sensor_conf.op_mode )
+                {
+                    ret = SetSensorOperationMode( BME68X_SLEEP_MODE );
+                }
+                break;
+        }
+
+        if( ret != ReturnCode::kOk )
+            return ret;
+
+        if( this->bsec.sensor_conf.trigger_measurement && 
+            this->bsec.sensor_conf.op_mode != BME68X_SLEEP_MODE )
+        {
+            Bme688FetchedData raw_data;
+            ret = FetchSensorData( raw_data );
+            if( ret == ReturnCode::kOk )
+            {
+                uint8_t n_fields_left = 0;
+                bme68x_data data;
+                do
+                {
+                    n_fields_left = GetSensorData( raw_data, data );
+                    /* check for valid gas data */
+                    if( data.status & BME68X_GASM_VALID_MSK )
+                    {
+                        ret = ProcessData(curr_time_ns, data);
+                        if( ret != ReturnCode::kOk )
+                        {
+                            return ret;
+                        }
+                    }
+                } while (n_fields_left);
+            }
+
+        }
+
+    }
+    return ReturnCode::kOk;
+}
+
+int8_t BME688::GetLastSensorCallStatus()
+{
+    return this->sensor.status;
+}
+
+bsec_library_return_t BME688::GetLastBsecCallStatus()
+{
+    return this->bsec.status;
+}
+
+
+// *********************************************************************
+// PRIVATE
+// *********************************************************************
+
 BME688::ReturnCode BME688::InitialiseSensor()
 {
-    sensor.dev.intf_ptr =  this;  
+    sensor.dev.intf_ptr =  this;
     sensor.dev.intf     =  BME68X_I2C_INTF;
     sensor.dev.read     =  ReadRegister;
     sensor.dev.write    =  WriteRegister;
-    sensor.dev.delay_us =  delay_us;
-    sensor.dev.amb_temp =  25; // used in arduino example
+    sensor.dev.delay_us =  DelayUs;
+    sensor.dev.amb_temp =  25;
     
     this->sensor.status = bme68x_init(&sensor.dev);
     if( this->sensor.status != BME68X_OK )
@@ -89,7 +209,7 @@ BME688::ReturnCode BME688::InitialiseBsec()
     return BME688::ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::UpdateSubscription(bsec_virtual_sensor_t sensor_list[], uint8_t n_sensors, float sample_rate)
+BME688::ReturnCode BME688::UpdateSubscription(bsec_virtual_sensor_t* sensor_list, uint8_t n_sensors, float sample_rate)
 {
     bsec_sensor_configuration_t virtual_sensors[BSEC_NUMBER_OUTPUTS];
     bsec_sensor_configuration_t sensor_settings[BSEC_MAX_PHYSICAL_SENSOR];
@@ -114,10 +234,9 @@ BME688::ReturnCode BME688::UpdateSubscription(bsec_virtual_sensor_t sensor_list[
     return ReturnCode::kOk;
 }
 
-/**
- *  Below is the first effort to re-implement BSEC2 Arduino library
- *
- */
+int64_t BME688::GetNextRunTimeNs(){
+    return this->bsec.sensor_conf.next_call;
+}
 
 /**
  * @brief Set the BME68X sensor configuration to forced mode
@@ -201,8 +320,8 @@ BME688::ReturnCode BME688::SetSensorToParallelMode( const bsec_bme_settings_t& c
  * @brief Function to set the Temperature, Pressure and Humidity over-sampling
  */
 BME688::ReturnCode BME688::SetSensorTphOverSampling( const uint8_t os_temp, 
-                                               const uint8_t os_pres, 
-                                               const uint8_t os_hum )
+                                                     const uint8_t os_pres, 
+                                                     const uint8_t os_hum )
 {
     this->sensor.status = bme68x_get_conf(&sensor.conf, &sensor.dev);
     if( this->sensor.status == BME68X_OK )
@@ -419,16 +538,17 @@ BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_
         n_inputs++;
     }
 
-    BsecOutputs outputs;
+    bsec_output_t outputs[BSEC_NUMBER_OUTPUTS];
+    uint8_t n_outputs;
 
     if (n_inputs > 0)
     {
 
-        outputs.n_outputs = BSEC_NUMBER_OUTPUTS;
-        memset(outputs.output, 0, sizeof(outputs.output));
+        n_outputs = BSEC_NUMBER_OUTPUTS;
+        memset(outputs, 0, sizeof(outputs));
 
         /* Processing of the input signals and returning of output samples is performed by bsec_do_steps() */
-        this->sensor.status = bsec_do_steps( inputs, n_inputs, outputs.output, &outputs.n_outputs );
+        this->sensor.status = bsec_do_steps( inputs, n_inputs, outputs, &n_outputs );
 
         if (this->sensor.status != BSEC_OK)
         {
@@ -438,89 +558,15 @@ BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_
         // let user know that data output is ready
         if( callback != nullptr )
         {
-            this->callback(data, outputs);
+            this->callback(data, outputs, n_outputs);
         }
     }
     return ReturnCode::kOk;
 }
 
-
-/**
- * @brief Callback from the user to read data from the BME68X using parallel mode/forced mode, process and store outputs
- */
-BME688::ReturnCode BME688::Run(void)
-{
-    ReturnCode ret = ReturnCode::kError;
-
-    // TODO: verify needed. Implementation might be wrong.
-    int64_t curr_time_ns = std::chrono::time_point_cast<std::chrono::nanoseconds>(Kernel::Clock::now()).time_since_epoch().count();
-    this->sensor.last_op_mode = this->bsec.sensor_conf.op_mode;
-
-    if (curr_time_ns >= this->bsec.sensor_conf.next_call)
-    {
-        /* Provides the information about the current sensor configuration that is
-           necessary to fulfill the input requirements, eg: operation mode, timestamp
-           at which the sensor data shall be fetched etc */
-        this->bsec.status = bsec_sensor_control( curr_time_ns, 
-                                                 &(this->bsec.sensor_conf) );
-        if (this->bsec.status != BSEC_OK)
-            return ReturnCode::kBsecRunFail;
-
-        switch ( this->bsec.sensor_conf.op_mode )
-        {
-            case BME68X_FORCED_MODE:
-                ret = SetSensorToForcedMode( this->bsec.sensor_conf );
-                break;
-            case BME68X_PARALLEL_MODE:
-                if ( this->sensor.last_op_mode != this->bsec.sensor_conf.op_mode )
-                {
-                    ret = SetSensorToParallelMode( this->bsec.sensor_conf );
-                }
-                break;
-
-            case BME68X_SLEEP_MODE:
-                if ( this->sensor.last_op_mode != this->bsec.sensor_conf.op_mode )
-                {
-                    ret = SetSensorOperationMode( BME68X_SLEEP_MODE );
-                }
-                break;
-        }
-
-        if( ret != ReturnCode::kOk )
-            return ret;
-
-        if( this->bsec.sensor_conf.trigger_measurement && 
-            this->bsec.sensor_conf.op_mode != BME68X_SLEEP_MODE )
-        {
-            Bme688FetchedData raw_data;
-            ret = FetchSensorData( raw_data );
-            if( ret == ReturnCode::kOk )
-            {
-                uint8_t n_fields_left = 0;
-                bme68x_data data;
-                do
-                {
-                    n_fields_left = GetSensorData( raw_data, data );
-                    /* check for valid gas data */
-                    if( data.status & BME68X_GASM_VALID_MSK )
-                    {
-                        ret = ProcessData(curr_time_ns, data);
-                        if( ret != ReturnCode::kOk )
-                        {
-                            return ret;
-                        }
-                    }
-                } while (n_fields_left);
-            }
-
-        }
-
-    }
-    return ReturnCode::kOk;
-}
-
-// Static function
-
+// *********************************************************************
+// STATIC SENSOR CALLBACK DEFINITION
+// *********************************************************************
 int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
     BME688* bme688 = (BME688*) intf_ptr;
@@ -545,7 +591,6 @@ int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *
  
     return rslt;
 }
-
 
 static int8_t WriteRegister(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
@@ -577,10 +622,10 @@ static int8_t WriteRegister(uint8_t reg_addr, const uint8_t *reg_data, uint32_t 
     return rslt;
 }
 
-static void delay_us(uint32_t time_us, void *intf_ptr)
+static void DelayUs(uint32_t time_us, void *intf_ptr)
 {
-    // use wait_us to wait without sleep
-    // if system goes to sleep, I2C comm need to be re-init
+    /* use wait_us to wait without sleep
+       if system goes to sleep, I2C comm need to be re-init */
     wait_us ( time_us );
 }
 
