@@ -19,6 +19,7 @@
 # Compiled Static libraries
 *.lai
 *.la
+*.a
 
 # Executables
 *.exe
@@ -41,3 +42,5 @@ cmake_build/
 
 BUILD
 .mbed
+mbed-os/
+stm32customtargets/
