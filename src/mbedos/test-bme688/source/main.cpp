@@ -34,17 +34,22 @@ static void data_available( const bme68x_data data, bsec_output_t* const outputs
                 printf("\tiaq = %f\r\n", output.signal );
                 printf("\tiaq accuracy = %d\r\n",(int) output.accuracy );
                 break;
-            case BSEC_OUTPUT_RAW_TEMPERATURE:
+            case BSEC_OUTPUT_STATIC_IAQ:
+                printf("\tstatic iaq = %f\r\n", output.signal );
+                printf("\tstatic iaq accuracy = %d\r\n",(int) output.accuracy );
+                break;
+            case BSEC_OUTPUT_CO2_EQUIVALENT:
+                printf("\tCO2 = %f\r\n", output.signal );
+                printf("\tCO2 accuracy = %d\r\n",(int) output.accuracy );
+                break;
+            case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
                 printf("\ttemperature = %f\r\n", output.signal );
                 break;
             case BSEC_OUTPUT_RAW_PRESSURE:
                 printf("\tpressure = %f\r\n", output.signal );
                 break;
-            case BSEC_OUTPUT_RAW_HUMIDITY:
+            case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
                 printf("\thumidity = %f\r\n", output.signal );
-                break;
-            case BSEC_OUTPUT_RAW_GAS:
-                printf("\tgas resistance = %f\r\n", output.signal );
                 break;
             case BSEC_OUTPUT_STABILIZATION_STATUS:
                 printf("\tstabilization status = %f\r\n", output.signal );
@@ -73,19 +78,20 @@ int main()
     /* Desired subscription list of BSEC2 outputs */
     bsec_virtual_sensor_t sensor_list[] = {
             BSEC_OUTPUT_IAQ,
-            BSEC_OUTPUT_RAW_TEMPERATURE,
+            BSEC_OUTPUT_STATIC_IAQ,
+            BSEC_OUTPUT_CO2_EQUIVALENT,
+            BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
             BSEC_OUTPUT_RAW_PRESSURE,
-            BSEC_OUTPUT_RAW_HUMIDITY,
-            BSEC_OUTPUT_RAW_GAS,
+            BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
             BSEC_OUTPUT_STABILIZATION_STATUS,
             BSEC_OUTPUT_RUN_IN_STATUS
     };
 
     // for Low Power mode, refreshed every 3s
-    // auto sample_rate = BSEC_SAMPLE_RATE_LP;
+    auto sample_rate = BSEC_SAMPLE_RATE_LP;
 
     // for Ultra-Low Power mode, refreshed every 300s
-    auto sample_rate = BSEC_SAMPLE_RATE_ULP;
+    // auto sample_rate = BSEC_SAMPLE_RATE_ULP;
 
     ReturnCode result = iaq_sensor.Initialise( sensor_list, ARRAY_LEN(sensor_list), sample_rate );
     if( result != ReturnCode::kOk )
