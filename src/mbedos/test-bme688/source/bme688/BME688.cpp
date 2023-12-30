@@ -4,6 +4,7 @@
 #define BSEC_CHECK_INPUT(x, shift)  (x & (1 << (shift-1)))
 
 using namespace std::chrono;
+using namespace teapotlabs::utils;
 
 namespace teapotlabs {
 namespace sensors {
@@ -14,6 +15,12 @@ namespace bme688 {
 // *********************************************************************
 static int8_t SensorInternalReadRegisterCb( uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr )
 {
+    // check user intf_ptr object
+    if( intf_ptr == nullptr )
+    {
+        return 0xFF; // return error
+    }
+
     BME688* bme688 = (BME688*) intf_ptr;
     if( bme688->i2c_local == nullptr )
     {
@@ -37,8 +44,14 @@ static int8_t SensorInternalReadRegisterCb( uint8_t reg_addr, uint8_t *reg_data,
     return rslt;
 }
 
-static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
+static int8_t SensorInternalWriteRegisterCb( uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr )
 {
+    // check user intf_ptr object
+    if( intf_ptr == nullptr )
+    {
+        return 0xFF; // return error
+    }
+
     // check callback obeject pointer
     BME688* bme688 = (BME688*) intf_ptr;
     if( bme688->i2c_local == nullptr )
@@ -74,7 +87,6 @@ static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr)
     wait_us ( time_us );
 }
 
-
 // *********************************************************************
 // PUBLIC
 // *********************************************************************
@@ -105,7 +117,16 @@ ReturnCode BME688::Initialise( bsec_virtual_sensor_t* sensor_list, uint8_t n_sen
     this->bsec.n_sensors = n_sensors;
     memcpy(this->bsec.sensor_list, sensor_list, n_sensors);
     
-    // TODO: check chip ID   
+    uint8_t chip_id;
+    result = this->GetChipId( chip_id );
+    if( result != ReturnCode::kOk )
+    {
+        return result;
+    }
+    if( chip_id != kBme688ChipId )
+    {
+        return ReturnCode::kSensorChipIdUnknown;
+    }
 
     /* initialise bme688 sensor */ 
     result = this->InitialiseSensor();
@@ -628,7 +649,11 @@ ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_data &da
 
 ReturnCode BME688::GetChipId( uint8_t& chip_id_out )
 {
-    return ReadRegister( kBme688ChipIdAddr, &chip_id_out, 1 );
+    if( ReadRegister( kBme688ChipIdAddr, &chip_id_out, 1 ) != ReturnCode::kOk )
+    {
+        return ReturnCode::kSensorGetChipIdFail;
+    }
+    return ReturnCode::kOk;
 }
 
 ReturnCode BME688::ReadRegister( const uint8_t reg_addr, uint8_t* const reg_data, uint32_t length )

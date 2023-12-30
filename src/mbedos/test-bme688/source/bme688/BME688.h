@@ -1,5 +1,5 @@
-#ifndef __BME688__H
-#define __BME688__H
+#ifndef BME688_H
+#define BME688_H
 
 #include "mbed.h"
 #include "bme68x_defs.h"
@@ -12,29 +12,32 @@ namespace sensors {
 namespace bme688 {
 
 /* defining constexpr in header might not be the best way to replace macro */
+constexpr uint8_t kBme688ChipId = 0x61;
 constexpr uint8_t kBme688ChipIdAddr = 0xD0;
 constexpr uint16_t kBsecTotalHeatDur = UINT16_C(140);
 
 enum class ReturnCode
 {
-        // success code
-        kOk = 0,
-        // error code
-        kError,
-        kSensorStructureFail,
-        kSensorConfigFail,
-        kSensorHeaterFail,
-        kSensorSetOperationFail,
-        kSensorOperationSeqFail,
-        kSensorBsecFail,
-        kSensorBsecSubscriptionFail,
-        kSensorBsecProcessFail,
-        kSensorGetDataFail,
-        kBsecInitFail,
-        kBsecRunFail,
-        kSensorInitFail,
-        kNullPointer,
-        kSensorReadRegisterFail
+    // success code
+    kOk = 0,
+    // error code
+    kError,
+    kSensorStructureFail,
+    kSensorConfigFail,
+    kSensorHeaterFail,
+    kSensorSetOperationFail,
+    kSensorOperationSeqFail,
+    kSensorBsecFail,
+    kSensorBsecSubscriptionFail,
+    kSensorBsecProcessFail,
+    kSensorGetDataFail,
+    kBsecInitFail,
+    kBsecRunFail,
+    kSensorInitFail,
+    kNullPointer,
+    kSensorReadRegisterFail,
+    kSensorChipIdUnknown,
+    kSensorGetChipIdFail
 };
 
 using Callback = void (*)( const bme68x_data data, bsec_output_t* const outputs, const uint8_t n_outputs );
@@ -72,7 +75,7 @@ class BME688{
 
     private:    
 
-        // enum and struct definition
+        // local struct definition
         struct Bme688FetchedData
         {
             bme68x_data data[3];

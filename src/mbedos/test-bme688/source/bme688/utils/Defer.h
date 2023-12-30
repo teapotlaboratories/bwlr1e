@@ -1,6 +1,9 @@
-#ifndef DEFER_H
-#define DEFER_H
+#ifndef UTILS_DEFER_H
+#define UTILS_DEFER_H
 
+namespace teapotlabs{
+namespace utils {
+    
 template <class T>
 class Defer
 {
@@ -14,5 +17,8 @@ class Defer
             deferred_object = target_object;
         };
 };
+
+} // namespace utils
+} // namespace teapotlabs
 
 #endif
