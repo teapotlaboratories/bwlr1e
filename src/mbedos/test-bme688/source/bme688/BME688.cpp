@@ -6,11 +6,11 @@
 using namespace std::chrono;
 
 // *********************************************************************
-// STATIC SENSOR CALLBACK FORWARD DECLARATION
+// SENSOR STATIC CALLBACK FORWARD DECLARATION
 // *********************************************************************
-static int8_t ReadRegister(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
-static int8_t WriteRegister(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
-static void DelayUs(uint32_t time_us, void *intf_ptr);
+static int8_t SensorInternalReadRegisterCb(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
+static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
+static void SensorDelayUsCb(uint32_t time_us, void *intf_ptr);
 
 
 // *********************************************************************
@@ -33,7 +33,7 @@ BME688::ReturnCode BME688::Initialise( bsec_virtual_sensor_t sensor_list[], uint
 {
     /* enable I2C */
     I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
-    this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see WriteRegister and ReadRegister
+    this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see SensorInternalWriteRegisterCb and SensorInternalReadRegisterCb
     Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer changing i2c_local to nullptr at function return
 
     BME688::ReturnCode result;
@@ -95,7 +95,7 @@ BME688::ReturnCode BME688::Run(void)
 {
     /* enable I2C */
     I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
-    this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see WriteRegister and ReadRegister
+    this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see SensorInternalWriteRegisterCb and SensorInternalReadRegisterCb
     Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer changing i2c_local to nullptr at function return
 
 
@@ -186,9 +186,9 @@ BME688::ReturnCode BME688::InitialiseSensor()
 {
     sensor.dev.intf_ptr =  this;
     sensor.dev.intf     =  BME68X_I2C_INTF;
-    sensor.dev.read     =  ReadRegister;
-    sensor.dev.write    =  WriteRegister;
-    sensor.dev.delay_us =  DelayUs;
+    sensor.dev.read     =  SensorInternalReadRegisterCb;
+    sensor.dev.write    =  SensorInternalWriteRegisterCb;
+    sensor.dev.delay_us =  SensorDelayUsCb;
     sensor.dev.amb_temp =  25;
     
     this->sensor.status = bme68x_init(&sensor.dev);
@@ -564,10 +564,26 @@ BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_
     return ReturnCode::kOk;
 }
 
+BME688::ReturnCode BME688::GetChipId( uint8_t& chip_id_out )
+{
+    // TODO: implement chip id read
+    return ReturnCode::kOk;
+}
+
+BME688::ReturnCode BME688::ReadRegister( uint8_t reg_addr, uint8_t* reg_data, uint32_t length )
+{
+    if( SensorInternalReadRegisterCb( reg_addr, reg_data, length, this ) != 0 )
+    {
+        return ReturnCode::kSensorReadRegisterFail;
+    }
+
+    return ReturnCode::kOk;
+}
+
 // *********************************************************************
-// STATIC SENSOR CALLBACK DEFINITION
+// SENSOR STATIC CALLBACK DEFINITION
 // *********************************************************************
-int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr)
+int8_t SensorInternalReadRegisterCb( uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr )
 {
     BME688* bme688 = (BME688*) intf_ptr;
     if( bme688->i2c_local == nullptr )
@@ -577,7 +593,7 @@ int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *
     }
     
     // local variable definition
-      int8_t rslt = 0; // Return 0 for Success, non-zero for failure
+    int8_t rslt = 0; // Return 0 for Success, non-zero for failure
     uint32_t aux  = 0;
     aux = bme688->i2c_local->write ( bme688->bme688_addr_8bit, (char*)&reg_addr, 1, true );
     if ( aux != 0 ) {
@@ -592,7 +608,7 @@ int8_t ReadRegister(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *
     return rslt;
 }
 
-static int8_t WriteRegister(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
+static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
 {
     // check callback obeject pointer
     BME688* bme688 = (BME688*) intf_ptr;
@@ -622,7 +638,7 @@ static int8_t WriteRegister(uint8_t reg_addr, const uint8_t *reg_data, uint32_t 
     return rslt;
 }
 
-static void DelayUs(uint32_t time_us, void *intf_ptr)
+static void SensorDelayUsCb(uint32_t time_us, void *intf_ptr)
 {
     /* use wait_us to wait without sleep
        if system goes to sleep, I2C comm need to be re-init */

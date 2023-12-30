@@ -7,7 +7,7 @@
 #include "bsec_datatypes.h"
 #include "bsec_interface.h"
 
-#define BME688_CHIP_ID_LOCATION 0xD0
+#define BME688_CHIP_ID_ADDR 0xD0
 #define BSEC_TOTAL_HEAT_DUR UINT16_C(140)
 
 class BME688{
@@ -32,7 +32,8 @@ class BME688{
             kBsecInitFail,
             kBsecRunFail,
             kSensorInitFail,
-            kNullPointer
+            kNullPointer,
+            kSensorReadRegisterFail
         };
 
         using Callback = void (*)( const bme68x_data data, bsec_output_t* const outputs, const uint8_t n_outputs );
@@ -41,6 +42,8 @@ class BME688{
         bsec_version_t version;
         uint32_t bme688_addr;
         uint32_t bme688_addr_8bit;
+
+        /* Stores I2C pin and I2C object for BSEC to use */
         PinName  i2c_sda;
         PinName  i2c_scl;
         I2C*     i2c_local;
@@ -70,8 +73,8 @@ class BME688{
             uint8_t     i_fields;
         };
         
-        // bme688 sensor internal variables
-        // store configuration for other bsec method to use
+        /* bme688 sensor internal variables
+           store configuration for other bsec method to use */
         struct
         {
             bme68x_conf conf;         // sensor configuration
@@ -80,7 +83,7 @@ class BME688{
             uint8_t     last_op_mode; // last operation mode of the sensor
         } sensor;
 
-        // bsec internal variables
+        /* bsec internal variables */
         struct
         {            
             // bsec libray configuration
@@ -121,6 +124,10 @@ class BME688{
                                        uint8_t n_sensors, 
                                        float sample_rate );
         ReturnCode ProcessData( const int64_t curr_time_ns, const bme68x_data &data );
+
+
+        ReturnCode GetChipId( uint8_t& chip_id_out );
+        ReturnCode ReadRegister( uint8_t reg_addr, uint8_t* reg_data, uint32_t length );
 };
 
 
