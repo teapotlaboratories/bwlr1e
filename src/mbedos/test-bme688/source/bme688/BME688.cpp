@@ -10,7 +10,7 @@ using namespace std::chrono;
 // *********************************************************************
 static int8_t SensorInternalReadRegisterCb(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
 static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
-static void SensorDelayUsCb(uint32_t time_us, void *intf_ptr);
+static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr);
 
 
 // *********************************************************************
@@ -188,7 +188,7 @@ BME688::ReturnCode BME688::InitialiseSensor()
     sensor.dev.intf     =  BME68X_I2C_INTF;
     sensor.dev.read     =  SensorInternalReadRegisterCb;
     sensor.dev.write    =  SensorInternalWriteRegisterCb;
-    sensor.dev.delay_us =  SensorDelayUsCb;
+    sensor.dev.delay_us =  SensorInternalDelayUsCb;
     sensor.dev.amb_temp =  25;
     
     this->sensor.status = bme68x_init(&sensor.dev);
@@ -638,7 +638,7 @@ static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr, const uint8_t *reg
     return rslt;
 }
 
-static void SensorDelayUsCb(uint32_t time_us, void *intf_ptr)
+static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr)
 {
     /* use wait_us to wait without sleep
        if system goes to sleep, I2C comm need to be re-init */
