@@ -10,11 +10,69 @@ namespace sensors {
 namespace bme688 {
 
 // *********************************************************************
-// SENSOR STATIC CALLBACK FORWARD DECLARATION
+// SENSOR STATIC CALLBACK DEFINITION
 // *********************************************************************
-static int8_t SensorInternalReadRegisterCb(uint8_t reg_addr, uint8_t *regdata, uint32_t length, void *intf_ptr);
-static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr,const uint8_t *reg_data, uint32_t length,void *intf_ptr);
-static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr);
+static int8_t SensorInternalReadRegisterCb( uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr )
+{
+    BME688* bme688 = (BME688*) intf_ptr;
+    if( bme688->i2c_local == nullptr )
+    {
+        // return error
+        return 0xFF;
+    }
+    
+    // local variable definition
+    int8_t rslt = 0; // Return 0 for Success, non-zero for failure
+    uint32_t aux  = 0;
+    aux = bme688->i2c_local->write ( bme688->bme688_addr_8bit, (char*)&reg_addr, 1, true );
+    if ( aux != 0 ) {
+        return 0xFF; // return error
+    } 
+
+    aux = bme688->i2c_local->read  ( bme688->bme688_addr_8bit, (char*)&reg_data[0], length );
+    if ( aux != 0 ) {
+        return 0xFF; // return error
+    } 
+ 
+    return rslt;
+}
+
+static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
+{
+    // check callback obeject pointer
+    BME688* bme688 = (BME688*) intf_ptr;
+    if( bme688->i2c_local == nullptr )
+    {
+        return 0xFF; // return error
+    }
+
+    // local variable definition
+      int8_t rslt    = 0; // Return 0 for Success, non-zero for failure
+    uint32_t aux     = 0;
+        char cmd[16] = {0};
+    uint32_t i       = 0;
+
+    // Prepare the data to be sent
+    cmd[0] = reg_addr;
+    for ( i = 1; i <= length; i++ ) {
+        cmd[i] = reg_data[i - 1];
+    }
+
+    // Write data
+    aux = bme688->i2c_local->write( bme688->bme688_addr_8bit, &cmd[0], length + 1, false );
+    if ( aux != 0 ) {
+        return 0xFF; // return error
+    } 
+
+    return rslt;
+}
+
+static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr)
+{
+    /* use wait_us to wait without sleep
+       if system goes to sleep, I2C comm need to be re-init */
+    wait_us ( time_us );
+}
 
 
 // *********************************************************************
@@ -582,71 +640,6 @@ ReturnCode BME688::ReadRegister( const uint8_t reg_addr, uint8_t* const reg_data
     }
 
     return ReturnCode::kOk;
-}
-
-// *********************************************************************
-// SENSOR STATIC CALLBACK DEFINITION
-// *********************************************************************
-int8_t SensorInternalReadRegisterCb( uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr )
-{
-    BME688* bme688 = (BME688*) intf_ptr;
-    if( bme688->i2c_local == nullptr )
-    {
-        // return error
-        return 0xFF;
-    }
-    
-    // local variable definition
-    int8_t rslt = 0; // Return 0 for Success, non-zero for failure
-    uint32_t aux  = 0;
-    aux = bme688->i2c_local->write ( bme688->bme688_addr_8bit, (char*)&reg_addr, 1, true );
-    if ( aux != 0 ) {
-        return 0xFF; // return error
-    } 
-
-    aux = bme688->i2c_local->read  ( bme688->bme688_addr_8bit, (char*)&reg_data[0], length );
-    if ( aux != 0 ) {
-        return 0xFF; // return error
-    } 
- 
-    return rslt;
-}
-
-static int8_t SensorInternalWriteRegisterCb(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr)
-{
-    // check callback obeject pointer
-    BME688* bme688 = (BME688*) intf_ptr;
-    if( bme688->i2c_local == nullptr )
-    {
-        return 0xFF; // return error
-    }
-
-    // local variable definition
-      int8_t rslt    = 0; // Return 0 for Success, non-zero for failure
-    uint32_t aux     = 0;
-        char cmd[16] = {0};
-    uint32_t i       = 0;
-
-    // Prepare the data to be sent
-    cmd[0] = reg_addr;
-    for ( i = 1; i <= length; i++ ) {
-        cmd[i] = reg_data[i - 1];
-    }
-
-    // Write data
-    aux = bme688->i2c_local->write( bme688->bme688_addr_8bit, &cmd[0], length + 1, false );
-    if ( aux != 0 ) {
-        return 0xFF; // return error
-    } 
-
-    return rslt;
-}
-
-static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr)
-{
-    /* use wait_us to wait without sleep
-       if system goes to sleep, I2C comm need to be re-init */
-    wait_us ( time_us );
 }
 
 } // namespace bme688
