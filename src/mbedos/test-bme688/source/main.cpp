@@ -15,6 +15,8 @@ mbed::DigitalOut led0(PA_15);
 mbed::DigitalOut led1(PA_1);
 #endif
 
+using namespace teapotlabs::sensors::bme688;
+
 static void data_available( const bme68x_data data, bsec_output_t* const outputs, const uint8_t n_outputs )
 {
     if (!n_outputs)
@@ -85,8 +87,8 @@ int main()
     // for Ultra-Low Power mode, refreshed every 300s
     auto sample_rate = BSEC_SAMPLE_RATE_ULP;
 
-    BME688::ReturnCode result = iaq_sensor.Initialise( sensor_list, ARRAY_LEN(sensor_list), sample_rate );
-    if( result != BME688::ReturnCode::kOk )
+    ReturnCode result = iaq_sensor.Initialise( sensor_list, ARRAY_LEN(sensor_list), sample_rate );
+    if( result != ReturnCode::kOk )
     {
         while( true )
         {
@@ -104,7 +106,7 @@ int main()
     {
         // get measurement
         result = iaq_sensor.Run();
-        if( result != BME688::ReturnCode::kOk )
+        if( result != ReturnCode::kOk )
         {
             printf("fail to call bsec run(), err: %d \n\r", result);
         }

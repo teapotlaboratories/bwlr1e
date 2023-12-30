@@ -7,36 +7,41 @@
 #include "bsec_datatypes.h"
 #include "bsec_interface.h"
 
-#define BME688_CHIP_ID_ADDR 0xD0
-#define BSEC_TOTAL_HEAT_DUR UINT16_C(140)
+namespace teapotlabs {
+namespace sensors {
+namespace bme688 {
+
+/* defining constexpr in header might not be the best way to replace macro */
+constexpr uint8_t kBme688ChipIdAddr = 0xD0;
+constexpr uint16_t kBsecTotalHeatDur = UINT16_C(140);
+
+enum class ReturnCode
+{
+        // success code
+        kOk = 0,
+        // error code
+        kError,
+        kSensorStructureFail,
+        kSensorConfigFail,
+        kSensorHeaterFail,
+        kSensorSetOperationFail,
+        kSensorOperationSeqFail,
+        kSensorBsecFail,
+        kSensorBsecSubscriptionFail,
+        kSensorBsecProcessFail,
+        kSensorGetDataFail,
+        kBsecInitFail,
+        kBsecRunFail,
+        kSensorInitFail,
+        kNullPointer,
+        kSensorReadRegisterFail
+};
+
+using Callback = void (*)( const bme68x_data data, bsec_output_t* const outputs, const uint8_t n_outputs );
 
 class BME688{
 
-    // enum and struct definition
     public:
-        enum class ReturnCode
-        {
-            // success code
-            kOk = 0,
-            // error code
-            kError,
-            kSensorStructureFail,
-            kSensorConfigFail,
-            kSensorHeaterFail,
-            kSensorSetOperationFail,
-            kSensorOperationSeqFail,
-            kSensorBsecFail,
-            kSensorBsecSubscriptionFail,
-            kSensorBsecProcessFail,
-            kSensorGetDataFail,
-            kBsecInitFail,
-            kBsecRunFail,
-            kSensorInitFail,
-            kNullPointer,
-            kSensorReadRegisterFail
-        };
-
-        using Callback = void (*)( const bme68x_data data, bsec_output_t* const outputs, const uint8_t n_outputs );
 
         /* Stores the version of the BSEC algorithm */
         bsec_version_t version;
@@ -57,7 +62,7 @@ class BME688{
          * @param sample_rate   : The sample rate of requested sensors
          * @return ReturnCode::kOk if everything initialized correctly
          */
-        ReturnCode Initialise( bsec_virtual_sensor_t sensor_list[], uint8_t n_sensors, float sample_rate );
+        ReturnCode Initialise( bsec_virtual_sensor_t* sensor_list, uint8_t n_sensors, float sample_rate );
         ReturnCode SetCallback( Callback cb );
         ReturnCode SetTemperatureOffset( const float temp_offset );
         int64_t GetNextRunTimeNs();
@@ -66,6 +71,8 @@ class BME688{
         bsec_library_return_t GetLastBsecCallStatus();
 
     private:    
+
+        // enum and struct definition
         struct Bme688FetchedData
         {
             bme68x_data data[3];
@@ -126,9 +133,12 @@ class BME688{
         ReturnCode ProcessData( const int64_t curr_time_ns, const bme68x_data &data );
 
 
+        ReturnCode ReadRegister( const uint8_t reg_addr, uint8_t* const reg_data, uint32_t length );
         ReturnCode GetChipId( uint8_t& chip_id_out );
-        ReturnCode ReadRegister( uint8_t reg_addr, uint8_t* reg_data, uint32_t length );
 };
 
+} // bme688
+} // namespace sensors
+} // namespace teapotlabs
 
 #endif

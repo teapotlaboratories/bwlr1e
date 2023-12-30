@@ -5,6 +5,10 @@
 
 using namespace std::chrono;
 
+namespace teapotlabs {
+namespace sensors {
+namespace bme688 {
+
 // *********************************************************************
 // SENSOR STATIC CALLBACK FORWARD DECLARATION
 // *********************************************************************
@@ -29,14 +33,14 @@ BME688::BME688( PinName i2c_sda, PinName i2c_scl, uint32_t bme688_addr ):bsec({0
     this->callback = nullptr;
 }
 
-BME688::ReturnCode BME688::Initialise( bsec_virtual_sensor_t sensor_list[], uint8_t n_sensors, float sample_rate )
+ReturnCode BME688::Initialise( bsec_virtual_sensor_t* sensor_list, uint8_t n_sensors, float sample_rate )
 {
     /* enable I2C */
     I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
     this->i2c_local = &i2c_temp;      // set i2c object for bsec to use, see SensorInternalWriteRegisterCb and SensorInternalReadRegisterCb
     Defer<I2C*> i2c_defer( this->i2c_local, nullptr );  // defer changing i2c_local to nullptr at function return
 
-    BME688::ReturnCode result;
+    ReturnCode result;
 
     /* copy virtual sensor list and sample rate */
     this->bsec.sample_rate = sample_rate;
@@ -71,7 +75,7 @@ BME688::ReturnCode BME688::Initialise( bsec_virtual_sensor_t sensor_list[], uint
     return ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::SetCallback( Callback cb )
+ReturnCode BME688::SetCallback( Callback cb )
 {
     if( cb == nullptr )
     {
@@ -82,7 +86,7 @@ BME688::ReturnCode BME688::SetCallback( Callback cb )
     return ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::SetTemperatureOffset( const float temp_offset )
+ReturnCode BME688::SetTemperatureOffset( const float temp_offset )
 {
     this->bsec.temperature_offset = temp_offset;
     return ReturnCode::kOk;
@@ -91,7 +95,7 @@ BME688::ReturnCode BME688::SetTemperatureOffset( const float temp_offset )
 /**
  * @brief Callback from the user to read data from the BME68X using parallel mode/forced mode, process and store outputs
  */
-BME688::ReturnCode BME688::Run(void)
+ReturnCode BME688::Run(void)
 {
     /* enable I2C */
     I2C i2c_temp( i2c_sda, i2c_scl ); // will be freed after function return
@@ -182,7 +186,7 @@ bsec_library_return_t BME688::GetLastBsecCallStatus()
 // PRIVATE
 // *********************************************************************
 
-BME688::ReturnCode BME688::InitialiseSensor()
+ReturnCode BME688::InitialiseSensor()
 {
     sensor.dev.intf_ptr =  this;
     sensor.dev.intf     =  BME68X_I2C_INTF;
@@ -194,22 +198,22 @@ BME688::ReturnCode BME688::InitialiseSensor()
     this->sensor.status = bme68x_init(&sensor.dev);
     if( this->sensor.status != BME68X_OK )
     {
-        return BME688::ReturnCode::kSensorInitFail;
+        return ReturnCode::kSensorInitFail;
     }
-    return BME688::ReturnCode::kOk;
+    return ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::InitialiseBsec()
+ReturnCode BME688::InitialiseBsec()
 {
     this->bsec.status = bsec_init();
     if( this->bsec.status != BSEC_OK )
     {
-        return BME688::ReturnCode::kBsecInitFail;
+        return ReturnCode::kBsecInitFail;
     }
-    return BME688::ReturnCode::kOk;
+    return ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::UpdateSubscription(bsec_virtual_sensor_t* sensor_list, uint8_t n_sensors, float sample_rate)
+ReturnCode BME688::UpdateSubscription(bsec_virtual_sensor_t* sensor_list, uint8_t n_sensors, float sample_rate)
 {
     bsec_sensor_configuration_t virtual_sensors[BSEC_NUMBER_OUTPUTS];
     bsec_sensor_configuration_t sensor_settings[BSEC_MAX_PHYSICAL_SENSOR];
@@ -241,7 +245,7 @@ int64_t BME688::GetNextRunTimeNs(){
 /**
  * @brief Set the BME68X sensor configuration to forced mode
  */
-BME688::ReturnCode BME688::SetSensorToForcedMode( const bsec_bme_settings_t &conf )
+ReturnCode BME688::SetSensorToForcedMode( const bsec_bme_settings_t &conf )
 {
     ReturnCode status = ReturnCode::kError;
     
@@ -277,7 +281,7 @@ BME688::ReturnCode BME688::SetSensorToForcedMode( const bsec_bme_settings_t &con
 /**
  * @brief Set the BME68X sensor configuration to parallel mode
  */
-BME688::ReturnCode BME688::SetSensorToParallelMode( const bsec_bme_settings_t& conf )
+ReturnCode BME688::SetSensorToParallelMode( const bsec_bme_settings_t& conf )
 {
     uint16_t shared_heater_dur = 0;
 
@@ -293,7 +297,7 @@ BME688::ReturnCode BME688::SetSensorToParallelMode( const bsec_bme_settings_t& c
     }
 
     // calculate heater duration
-    shared_heater_dur = BSEC_TOTAL_HEAT_DUR - (GetSensorMeasurementDuration(BME68X_PARALLEL_MODE) / INT64_C(1000));
+    shared_heater_dur = kBsecTotalHeatDur - (GetSensorMeasurementDuration(BME68X_PARALLEL_MODE) / INT64_C(1000));
 
     // set heater profile
     status = SetSensorHeaterProfile( (uint16_t*) conf.heater_temperature_profile, 
@@ -319,7 +323,7 @@ BME688::ReturnCode BME688::SetSensorToParallelMode( const bsec_bme_settings_t& c
 /**
  * @brief Function to set the Temperature, Pressure and Humidity over-sampling
  */
-BME688::ReturnCode BME688::SetSensorTphOverSampling( const uint8_t os_temp, 
+ReturnCode BME688::SetSensorTphOverSampling( const uint8_t os_temp, 
                                                      const uint8_t os_pres, 
                                                      const uint8_t os_hum )
 {
@@ -343,7 +347,7 @@ BME688::ReturnCode BME688::SetSensorTphOverSampling( const uint8_t os_temp,
 /**
  * @brief Function to set the heater profile for Forced mode
  */
-BME688::ReturnCode BME688::SetSensorHeaterProfile( const uint16_t temp, 
+ReturnCode BME688::SetSensorHeaterProfile( const uint16_t temp, 
                                              const uint16_t dur )
 {
     bme68x_heatr_conf heater_conf
@@ -365,7 +369,7 @@ BME688::ReturnCode BME688::SetSensorHeaterProfile( const uint16_t temp,
 /**
  * @brief Function to set the heater profile for Parallel mode
  */
-BME688::ReturnCode BME688::SetSensorHeaterProfile( uint16_t* const temp, 
+ReturnCode BME688::SetSensorHeaterProfile( uint16_t* const temp, 
                                              uint16_t* const mul, 
                                              const uint16_t shared_heater_dur, 
                                              const uint8_t profile_len )
@@ -392,7 +396,7 @@ BME688::ReturnCode BME688::SetSensorHeaterProfile( uint16_t* const temp,
 /**
  * @brief Function to set the operation mode
  */
-BME688::ReturnCode BME688::SetSensorOperationMode(const uint8_t op_mode)
+ReturnCode BME688::SetSensorOperationMode(const uint8_t op_mode)
 {
     this->sensor.status = bme68x_set_op_mode(op_mode, &sensor.dev);
 	if( this->sensor.status == BME68X_OK && 
@@ -425,7 +429,7 @@ uint32_t BME688::GetSensorMeasurementDuration(const uint8_t op_mode)
 /**
  * @brief Function to fetch data from the sensor into the local buffer
  */
-BME688::ReturnCode BME688::FetchSensorData( Bme688FetchedData &data_out )
+ReturnCode BME688::FetchSensorData( Bme688FetchedData &data_out )
 {
 	data_out.n_fields = 0;
 	data_out.i_fields = 0;
@@ -480,7 +484,7 @@ uint8_t BME688::GetSensorData( Bme688FetchedData &data_in,
 /**
  * @brief Reads data from the BME68X sensor and process it
  */
-BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_data &data)
+ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_data &data)
 {
     bsec_input_t inputs[BSEC_MAX_PHYSICAL_SENSOR]; /* Temp, Pres, Hum & Gas */
     uint8_t n_inputs = 0;
@@ -564,14 +568,14 @@ BME688::ReturnCode BME688::ProcessData(const int64_t curr_time_ns, const bme68x_
     return ReturnCode::kOk;
 }
 
-BME688::ReturnCode BME688::GetChipId( uint8_t& chip_id_out )
+ReturnCode BME688::GetChipId( uint8_t& chip_id_out )
 {
-    // TODO: implement chip id read
-    return ReturnCode::kOk;
+    return ReadRegister( kBme688ChipIdAddr, &chip_id_out, 1 );
 }
 
-BME688::ReturnCode BME688::ReadRegister( uint8_t reg_addr, uint8_t* reg_data, uint32_t length )
+ReturnCode BME688::ReadRegister( const uint8_t reg_addr, uint8_t* const reg_data, uint32_t length )
 {
+    // re-use static function from bme68x_init()
     if( SensorInternalReadRegisterCb( reg_addr, reg_data, length, this ) != 0 )
     {
         return ReturnCode::kSensorReadRegisterFail;
@@ -644,5 +648,9 @@ static void SensorInternalDelayUsCb(uint32_t time_us, void *intf_ptr)
        if system goes to sleep, I2C comm need to be re-init */
     wait_us ( time_us );
 }
+
+} // namespace bme688
+} // namespace sensors
+} // namespace teapotlabs
 
 
