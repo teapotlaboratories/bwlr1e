@@ -11,7 +11,7 @@ namespace teapotlabs {
 namespace sensors {
 namespace bme688 {
 
-/* defining constexpr in header might not be the best way to replace macro */
+/* NOTE: defining constexpr in header might not be the best way to replace macro */
 constexpr uint8_t kBme688ChipId = 0x61;
 constexpr uint8_t kBme688ChipIdAddr = 0xD0;
 constexpr uint16_t kBsecTotalHeatDur = UINT16_C(140);
@@ -141,7 +141,7 @@ class BME688{
         } bsec;
         Callback    callback;
 
-        // BME688 sensor specific method
+        /* BME688 sensor specific method */
         ReturnCode InitialiseSensor();
         ReturnCode SetSensorTphOverSampling( const uint8_t os_temp, 
                                              const uint8_t os_pres, 
@@ -160,8 +160,7 @@ class BME688{
         uint8_t GetSensorData( Bme688FetchedData &data_in,
                                bme68x_data &data_out );
 
-        
-        // BSEC specific method
+        /* BSEC sensor specific method */
         ReturnCode InitialiseBsec();
         ReturnCode UpdateSubscription( bsec_virtual_sensor_t* sensor_list, 
                                        uint8_t n_sensors, 
