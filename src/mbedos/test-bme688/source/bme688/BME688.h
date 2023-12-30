@@ -46,12 +46,8 @@ class BME688{
 
     public:
 
-        /* Stores the version of the BSEC algorithm */
-        bsec_version_t version;
         uint32_t bme688_addr;
         uint32_t bme688_addr_8bit;
-
-        /* Stores I2C pin and I2C object for BSEC to use */
         PinName  i2c_sda;
         PinName  i2c_scl;
         I2C*     i2c_local;
@@ -66,16 +62,53 @@ class BME688{
          * @return ReturnCode::kOk if everything initialized correctly
          */
         ReturnCode Initialise( bsec_virtual_sensor_t* sensor_list, uint8_t n_sensors, float sample_rate );
+
+        /**
+         * @brief Set callback to notify data ready to user
+         * @param cb   : User callback
+         * @return ReturnCode::kOk if cb is valid
+         */
         ReturnCode SetCallback( Callback cb );
+
+        /**
+         * @brief Set temperature offset for post processing sensor reading 
+         * @param temp_offset   : temperature to offset sensor readings
+         * @return ReturnCode::kOk if cb is valid
+         */
         ReturnCode SetTemperatureOffset( const float temp_offset );
+
+        /**
+         * @brief Get next time Run() need to be called in ns
+         * @return target time in nanoseconds for next Run() call
+         */
         int64_t GetNextRunTimeNs();
+
+        /**
+         * @brief Call from the user to read data from the BME68X using parallel mode/forced mode, process and store outputs
+         * @return ReturnCode::kOk if processing is succesful
+         */
         ReturnCode Run();
+
+        /**
+         * @brief Get last bme688 library call status
+         * @return last status of a bme68x api call
+         */
         int8_t GetLastSensorCallStatus();
+
+
+        /**
+         * @brief Get last bme68x library call status
+         * @return last status of a bme68x api call
+         */
+
+        /**
+         * @brief Get last bsec library call status
+         * @return last status of a bsec api call
+         */
         bsec_library_return_t GetLastBsecCallStatus();
 
     private:    
-
-        // local struct definition
+        /* local struct definition */
         struct Bme688FetchedData
         {
             bme68x_data data[3];
